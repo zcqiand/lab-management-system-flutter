@@ -29,9 +29,13 @@ flutter run -d chrome --web-port 5208 --dart-define=API_BASE_URL=http://localhos
 bash scripts/gen-shared.sh
 ```
 
+> Phase 1 起登录走原生通道 `POST /api/auth/native-login`（家族 spec §7 的 `/auth/login` 系浏览器表单端点，勘误见已批 spec §1.3）。
+> token 存储走 `TokenStore` 缝：Android Keystore 级 / **Web 端 localStorage 级**
+> （flutter_secure_storage web 实现，与 react 参照同级，联调正式凭据前知悉）。
+
 ## 功能特性
 
-镜像 lab-swift 树 M00/M01/M03 三模块（2026-10-04 人裁范围），全部 `规划`（学习路线分期：Phase 1 认证 → Phase 2 接收登记 → Phase 3 SSO 跳板）。
+镜像 lab-swift 树 M00/M01/M03 mirror 范围。M01 认证切片 Phase 1 落地：原生登录（native-login，无 clientId）+ 401 缝 + 登出，**开发中**；M00/M03 与 M01 其余行仍规划（学习路线分期：Phase 1 认证 → Phase 2 接收登记 → Phase 3 SSO 跳板）。
 
 ## 技术栈
 

@@ -5,7 +5,7 @@
 | 提出人 | zcqiand |
 | 提出日期 | 2026-10-05 |
 | 优先级 | P1 |
-| 状态 | **开发中**（T7 收口步回填终态与任务表 commit hash） |
+| 状态 | **开发中**（代码+测试全绿，GA 翻转待 Phase 2 真后端联调人工验收） |
 | 关联 ADR | —（本仓尚无 ADR） |
 | 上游 | lab-management-system-shared TypeSpec SSOT（需求与 API 基线）；已批 spec `xr-code-suite/docs/superpowers/specs/2026-10-05-lab-flutter-phase1-auth-design.md`；lab-react 登录实现为交互参照；lab-swift REQ-2026-003 Q4-C（原生通道人裁）；saas-flutter Phase 1（tag v0.2.0-20261005）为配方参照 |
 
@@ -61,13 +61,13 @@ SSO（I03 → Phase 3）；refresh 流程；/auth/me 与 M00.F01 翻转；租户
 
 | 任务 ID | 任务描述 | 类型 | 负责人 | 状态 |
 |---|---|---|---|---|
-| T1 | 依赖钉死+生成物签名核实 | 基建 | Claude | 完成 |
-| T2 | TokenStore 缝（抽象+Secure+内存 fake） | 开发 | Claude | 完成 |
-| T3 | SessionGuard/AuthInterceptor/buildDio/providers | 开发 | Claude | 完成 |
-| T4 | AuthState+AuthController+REQ 首立+I06 翻转 | 开发 | Claude | 进行中 |
-| T5 | 401 缝接线+登出测试+I02/I04 翻转 | 开发 | Claude | 待办 |
-| T6 | LoginPage+main.dart 壳+@entry 锚 | 开发 | Claude | 待办 |
-| T7 | docs 收口+trace.json+全门绿+终态回填 | 对齐 | Claude | 待办 |
+| T1 | 依赖钉死+生成物签名核实 | 基建 | Claude | 完成（`afaefd8`） |
+| T2 | TokenStore 缝（抽象+Secure+内存 fake） | 开发 | Claude | 完成（`6b052cd`） |
+| T3 | SessionGuard/AuthInterceptor/buildDio/providers | 开发 | Claude | 完成（`971d30d`） |
+| T4 | AuthState+AuthController+REQ 首立+I06 翻转 | 开发 | Claude | 完成（`32ff9c2`） |
+| T5 | 401 缝接线+登出测试+I02/I04 翻转 | 开发 | Claude | 完成（`8461f81`） |
+| T6 | LoginPage+main.dart 壳+@entry 锚 | 开发 | Claude | 完成（`d56f905`） |
+| T7 | docs 收口+trace.json+全门绿+终态回填 | 对齐 | Claude | 完成（本 commit） |
 
 ## 4. 功能影响（需求与功能对齐的唯一位置）
 
