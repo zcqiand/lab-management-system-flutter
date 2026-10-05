@@ -47,6 +47,21 @@ if grep -rq "part '" "$ROOT/.openapi-tmp/dart/lib" 2>/dev/null; then
   # built_value 官方语义：删触发行即不生成 mixin（Angular 时代遗物，消费方无人用）。
   # 同 swift 仓「已知生成器缺陷脚本内修补」先例；确定性 sed，幂等。
   sed -i '/^abstract class .*Mixin = Object with _\$/d' "$ROOT"/.openapi-tmp/dart/lib/src/model/*.dart
+  # 修补②（同 swift 仓 RequirementComparison 修补① 同源缺陷）：lab 契约枚举
+  # RequirementComparison 含符号值 ≥/≤，dart-dio 枚举模板产非法 Dart 成员名
+  # （`static const RequirementComparison  = _$;` / `... 2 = _$2;`），built_value
+  # generator 编译红。sed 改名 gte/lte（wireName 保持符号，解码不受影响；
+  # 命名随 swift 仓同枚举先例，家族 API 面一致）。确定性 sed，幂等。
+  RC_DART="$ROOT/.openapi-tmp/dart/lib/src/model/requirement_comparison.dart"
+  if [ -f "$RC_DART" ]; then
+    sed -i 's/static const RequirementComparison  = _\$/static const RequirementComparison gte = _\$gte/; s/static const RequirementComparison 2 = _\$2/static const RequirementComparison lte = _\$lte/' "$RC_DART"
+    if ! grep -q 'static const RequirementComparison gte = _\$gte;' "$RC_DART" \
+      || ! grep -q 'static const RequirementComparison lte = _\$lte;' "$RC_DART" \
+      || grep -q 'static const RequirementComparison  = \|static const RequirementComparison 2 = ' "$RC_DART"; then
+      echo "[gen-shared] fail-loud：修补② 失配——RequirementComparison 符号值改名未生效（生成器输出漂移？）" >&2
+      exit 3
+    fi
+  fi
   (cd "$ROOT/.openapi-tmp/dart" && dart pub get)
   (cd "$ROOT/.openapi-tmp/dart" && dart run build_runner build --delete-conflicting-outputs)
 fi
@@ -75,7 +90,9 @@ if grep -rn "Mixin = Object with" "$ROOT/lib/generated" >/dev/null 2>&1; then
   exit 3
 fi
 # 生成物目录级 analyzer 配置：error/warning 分析保留（生成物照样过类型检查），
-# 仅关闭生成器风格类 lint（首跑 322 info × 6 规则）与生成器固有噪声告警
+# 仅关闭生成器风格类 lint（首跑 322 info × 6 规则；lab 契约大写枚举值另触发
+# constant_identifier_names ×4——TESTING/JUDGMENT/QUALIFIED/RESTRICTED，改成员名
+# 动 API 面，只关 lint 不改面）与生成器固有噪声告警
 # （unused_import ×24 / strict_raw_type / unused_element_parameter）。
 # 手写代码不受影响（仓库根严格档仍全开）；目录被本脚本先删后写，故每跑必重写（幂等）。
 cat > "$ROOT/lib/generated/analysis_options.yaml" <<'EOF'
@@ -96,6 +113,7 @@ linter:
     unnecessary_lambdas: false
     use_super_parameters: false
     unnecessary_brace_in_string_interps: false
+    constant_identifier_names: false
 EOF
 # dart format 落盘：生成器输出与当前 SDK 格式化器有出入（首跑 126 文件红 L1），
 # 格式化后的字节即 committed 形态；同 SDK 重跑格式化零变化 → 幂等不破。

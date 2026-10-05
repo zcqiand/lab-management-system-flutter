@@ -1,0 +1,187 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'inspection_dictionary_list_standard_parameter_links200_response.dart';
+
+// **************************************************************************
+// BuiltValueGenerator
+// **************************************************************************
+
+class _$InspectionDictionaryListStandardParameterLinks200Response
+    extends InspectionDictionaryListStandardParameterLinks200Response {
+  @override
+  final BuiltList<StandardParameterLink> items;
+  @override
+  final int page;
+  @override
+  final int pageSize;
+  @override
+  final int total;
+
+  factory _$InspectionDictionaryListStandardParameterLinks200Response([
+    void Function(
+      InspectionDictionaryListStandardParameterLinks200ResponseBuilder,
+    )?
+    updates,
+  ]) =>
+      (InspectionDictionaryListStandardParameterLinks200ResponseBuilder()
+            ..update(updates))
+          ._build();
+
+  _$InspectionDictionaryListStandardParameterLinks200Response._({
+    required this.items,
+    required this.page,
+    required this.pageSize,
+    required this.total,
+  }) : super._();
+  @override
+  InspectionDictionaryListStandardParameterLinks200Response rebuild(
+    void Function(
+      InspectionDictionaryListStandardParameterLinks200ResponseBuilder,
+    )
+    updates,
+  ) => (toBuilder()..update(updates)).build();
+
+  @override
+  InspectionDictionaryListStandardParameterLinks200ResponseBuilder
+  toBuilder() =>
+      InspectionDictionaryListStandardParameterLinks200ResponseBuilder()
+        ..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is InspectionDictionaryListStandardParameterLinks200Response &&
+        items == other.items &&
+        page == other.page &&
+        pageSize == other.pageSize &&
+        total == other.total;
+  }
+
+  @override
+  int get hashCode {
+    var _$hash = 0;
+    _$hash = $jc(_$hash, items.hashCode);
+    _$hash = $jc(_$hash, page.hashCode);
+    _$hash = $jc(_$hash, pageSize.hashCode);
+    _$hash = $jc(_$hash, total.hashCode);
+    _$hash = $jf(_$hash);
+    return _$hash;
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper(
+            r'InspectionDictionaryListStandardParameterLinks200Response',
+          )
+          ..add('items', items)
+          ..add('page', page)
+          ..add('pageSize', pageSize)
+          ..add('total', total))
+        .toString();
+  }
+}
+
+class InspectionDictionaryListStandardParameterLinks200ResponseBuilder
+    implements
+        Builder<
+          InspectionDictionaryListStandardParameterLinks200Response,
+          InspectionDictionaryListStandardParameterLinks200ResponseBuilder
+        > {
+  _$InspectionDictionaryListStandardParameterLinks200Response? _$v;
+
+  ListBuilder<StandardParameterLink>? _items;
+  ListBuilder<StandardParameterLink> get items =>
+      _$this._items ??= ListBuilder<StandardParameterLink>();
+  set items(ListBuilder<StandardParameterLink>? items) => _$this._items = items;
+
+  int? _page;
+  int? get page => _$this._page;
+  set page(int? page) => _$this._page = page;
+
+  int? _pageSize;
+  int? get pageSize => _$this._pageSize;
+  set pageSize(int? pageSize) => _$this._pageSize = pageSize;
+
+  int? _total;
+  int? get total => _$this._total;
+  set total(int? total) => _$this._total = total;
+
+  InspectionDictionaryListStandardParameterLinks200ResponseBuilder() {
+    InspectionDictionaryListStandardParameterLinks200Response._defaults(this);
+  }
+
+  InspectionDictionaryListStandardParameterLinks200ResponseBuilder get _$this {
+    final $v = _$v;
+    if ($v != null) {
+      _items = $v.items.toBuilder();
+      _page = $v.page;
+      _pageSize = $v.pageSize;
+      _total = $v.total;
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(
+    InspectionDictionaryListStandardParameterLinks200Response other,
+  ) {
+    _$v = other as _$InspectionDictionaryListStandardParameterLinks200Response;
+  }
+
+  @override
+  void update(
+    void Function(
+      InspectionDictionaryListStandardParameterLinks200ResponseBuilder,
+    )?
+    updates,
+  ) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  InspectionDictionaryListStandardParameterLinks200Response build() => _build();
+
+  _$InspectionDictionaryListStandardParameterLinks200Response _build() {
+    _$InspectionDictionaryListStandardParameterLinks200Response _$result;
+    try {
+      _$result =
+          _$v ??
+          _$InspectionDictionaryListStandardParameterLinks200Response._(
+            items: items.build(),
+            page: BuiltValueNullFieldError.checkNotNull(
+              page,
+              r'InspectionDictionaryListStandardParameterLinks200Response',
+              'page',
+            ),
+            pageSize: BuiltValueNullFieldError.checkNotNull(
+              pageSize,
+              r'InspectionDictionaryListStandardParameterLinks200Response',
+              'pageSize',
+            ),
+            total: BuiltValueNullFieldError.checkNotNull(
+              total,
+              r'InspectionDictionaryListStandardParameterLinks200Response',
+              'total',
+            ),
+          );
+    } catch (_) {
+      late String _$failedField;
+      try {
+        _$failedField = 'items';
+        items.build();
+      } catch (e) {
+        throw BuiltValueNestedFieldError(
+          r'InspectionDictionaryListStandardParameterLinks200Response',
+          _$failedField,
+          e.toString(),
+        );
+      }
+      rethrow;
+    }
+    replace(_$result);
+    return _$result;
+  }
+}
+
+// ignore_for_file: deprecated_member_use_from_same_package,type=lint

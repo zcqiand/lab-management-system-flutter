@@ -1,0 +1,7 @@
+{
+  "api_synced_sha": "d30a86b145272f16946cb99def2e1165318fff83",
+  "api_synced_at": "2026-10-05T02:02:17.006791+00:00",
+  "api_synced_cmd": "gen-shared.sh",
+  "shared_sha": "d30a86b145272f16946cb99def2e1165318fff83",
+  "consumer_repo": "lab-management-system-flutter"
+}
