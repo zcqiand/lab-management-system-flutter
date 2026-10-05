@@ -1,5 +1,5 @@
-name: saas_identity_platform_flutter
-description: SaaS 多租户多应用身份平台的 Flutter 客户端（Android + Web）。
+name: lab_management_system_flutter
+description: 建筑工程实验室管理系统的 Flutter 客户端（Android + Web）。
 publish_to: none
 version: 0.1.0
 

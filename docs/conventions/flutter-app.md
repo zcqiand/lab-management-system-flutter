@@ -6,12 +6,12 @@
 
 | 场景 | API_BASE_URL | 命令 |
 | --- | --- | --- |
-| web dev → saas-nextjs | `http://localhost:5101` | `flutter run -d chrome --web-port 5108 --dart-define=API_BASE_URL=http://localhost:5101` |
-| web dev → aspnetcore/springboot/fastapi | `http://localhost:5104 / 5105 / 5107` | 同上换值 |
+| web dev → lab-nextjs | `http://localhost:5201` | `flutter run -d chrome --web-port 5208 --dart-define=API_BASE_URL=http://localhost:5201` |
+| web dev → aspnetcore/springboot/fastapi | `http://localhost:5204 / 5205 / 5207` | 同上换值 |
 | Android 模拟器 | `http://10.0.2.2:<后端槽位>`（模拟器 localhost 是自己，非宿主） | `flutter run -d emulator... --dart-define=...` |
 
-- **web dev 端口钉死 5108**（家族扩展段首位，saas.md 值表 + multi-repo-family.md §6）。禁裸 `flutter run -d chrome`（随机端口进不了后端 CORS 白名单——「裸 curl 通、带 Origin 500」指纹）。
-- CORS：后端 `SAAS_CORS_ALLOWED_ORIGINS` 追加 `http://localhost:5108` 是 **Phase 2** 接真后端时的后端仓改动，Phase 0a 不动。
+- **web dev 端口钉死 5208**（家族扩展段首位，lab.md 值表 + multi-repo-family.md §6）。禁裸 `flutter run -d chrome`（随机端口进不了后端 CORS 白名单——「裸 curl 通、带 Origin 500」指纹）。
+- CORS：后端 `LAB_CORS_ALLOWED_ORIGINS` 追加 `http://localhost:5208` 是 **Phase 2** 接真后端时的后端仓改动，Phase 0b 不动。
 - prod 基线 URL 待 Phase 2+ 定（家族惯例 `https://<family>-<stack>.xiangru.uk`，client 仓无部署端口）。
 
 ## 2. Riverpod 分层约定
@@ -34,6 +34,6 @@
 
 ```bash
 cd output/<flutter 仓>
-flutter create --platforms=android,web --project-name saas_identity_platform_flutter .
+flutter create --platforms=android,web --project-name lab_management_system_flutter .
 git status   # review：android/ web/ 入库，pubspec 不应被改（被改则人工核对合并）
 ```
