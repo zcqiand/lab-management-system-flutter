@@ -100,6 +100,7 @@ void main() {
   });
 
   testWidgets('登录成功：走真流程到 Authed（displayName 回退 username）', (tester) async {
+    // fn: M01.F05.I06
     final (dio, adapter) = _loginRig();
     adapter.onPost(
       '/api/auth/native-login',
