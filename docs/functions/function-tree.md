@@ -35,7 +35,7 @@
 | M01.F05.I02 | Token 注入与失效跳登录 | 接口：401 拦截跳登录 + token 注入请求头（REQ-2026-003） | 规划 |
 | M01.F05.I03 | SSO OAuth 2.0 授权码流（原生形态） | ASWebAuthenticationSession 消费 authorizeUrl → 回跳验 state → callback 换 JWT（REQ-2026-010） | 规划 |
 | M01.F05.I04 | 登出 | 按钮：logout + Keychain 清空 → 回登录页（REQ-2026-003） | 规划 |
-| M01.F05.I06 | 原生登录（非浏览器表单） | 页面：用户名+密码 → `POST /auth/native-login` 换 lab JWT（REQ-2026-003 Q4-C；I01 家族已废弃号不回收，I05 已用取下一号） | 规划 |
+| M01.F05.I06 | 原生登录（非浏览器表单） | 页面：用户名+密码 → `POST /auth/native-login` 换 lab JWT（REQ-2026-003 Q4-C；I01 家族已废弃号不回收，I05 已用取下一号） | 开发中 |
 
 ---
 
