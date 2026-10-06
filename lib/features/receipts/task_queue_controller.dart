@@ -2,6 +2,8 @@ import 'package:built_collection/built_collection.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:lab_management_system_flutter/core/auth/auth_state.dart';
+import 'package:lab_management_system_flutter/core/auth/auth_controller.dart';
 import 'package:lab_management_system_flutter/generated/lab_shared_generated.dart'
     hide AuthState;
 
@@ -22,10 +24,26 @@ class TaskQueueLoaded extends TaskQueueState {
     required this.items,
     required this.selectedIds,
     this.keyword,
+    this.actFeedback,
   });
   final BuiltList<SampleReceipt> items;
   final BuiltSet<String> selectedIds;
   final String? keyword;
+
+  /// act 批量反馈（sample_ext saveError 同款）：逐条失败项「id：message」或
+  /// 422 专文案；null = 无。页侧 ref.listen（prev is Acting）转 SnackBar，
+  /// 状态自身保持 Loaded 不翻全屏错误。回刷/重载即消费置空。
+  final String? actFeedback;
+}
+
+/// act 批量进行中（I05）：继承 Loaded 保住列表与选择上屏，UI 关 act 按钮。
+class TaskQueueActing extends TaskQueueLoaded {
+  const TaskQueueActing({
+    required super.items,
+    required super.selectedIds,
+    super.keyword,
+    super.actFeedback,
+  });
 }
 
 class TaskQueueEmpty extends TaskQueueState {
@@ -82,7 +100,62 @@ class TaskQueueController extends Notifier<TaskQueueState> {
       items: cur.items,
       selectedIds: builder.build(),
       keyword: cur.keyword,
+      actFeedback: cur.actFeedback,
     );
+  }
+
+  /// operator 解析链（M03.F01 详情页同款）：displayName 非空优先，否则
+  /// userId；双空 = 无操作人身份 → null（按钮已禁，此处再拦，ADR-0019）。
+  String? _resolveOperator(AuthState auth) => switch (auth) {
+    Authed(:final userId, :final displayName) =>
+      (displayName?.isNotEmpty ?? false) ? displayName : userId,
+    _ => null,
+  };
+
+  /// act 三动作（I05：提交到数据录入/退回接样/撤回）。acting 期再调 =
+  /// no-op（防抖）。200：清选择 + silent 回刷；结果含失败项 → actFeedback
+  /// 逐条「id：message」（页侧 SnackBar）。422（RETURN 无前置）→ 专文案
+  /// 「当前阶段不可退回」，列表与选择不动（可重试）；其余 → G-10 三分支。
+  Future<void> runAct(FlowAction action) async {
+    final cur = state;
+    if (cur is! TaskQueueLoaded || cur is TaskQueueActing) return;
+    if (cur.selectedIds.isEmpty) return;
+    final operator_ = _resolveOperator(ref.read(authControllerProvider));
+    if (operator_ == null) return;
+    state = TaskQueueActing(
+      items: cur.items,
+      selectedIds: cur.selectedIds,
+      keyword: cur.keyword,
+    );
+    try {
+      final response = await _api.receiptsActFlowAssigning(
+        flowActionRequest: FlowActionRequest(
+          (b) => b
+            ..ids = ListBuilder<String>(cur.selectedIds)
+            ..action = action
+            ..operator_ = operator_,
+        ),
+      );
+      if (!ref.mounted) return; // autoDispose：页 pop 后丢陈旧响应
+      final failures = response.data!.where((r) => !r.ok).toList();
+      state = TaskQueueLoaded(
+        items: cur.items,
+        selectedIds: BuiltSet<String>(),
+        keyword: cur.keyword,
+        actFeedback: failures.isEmpty
+            ? null
+            : failures.map((r) => '${r.id}：${r.message ?? '操作失败'}').join('；'),
+      );
+      await load(keyword: cur.keyword, silent: true);
+    } on DioException catch (e) {
+      if (!ref.mounted) return;
+      state = TaskQueueLoaded(
+        items: cur.items,
+        selectedIds: cur.selectedIds,
+        keyword: cur.keyword,
+        actFeedback: e.response?.statusCode == 422 ? '当前阶段不可退回' : _mapError(e),
+      );
+    }
   }
 
   String _mapError(DioException e) {

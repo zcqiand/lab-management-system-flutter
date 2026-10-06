@@ -2,12 +2,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:lab_management_system_flutter/core/auth/auth_state.dart';
+import 'package:lab_management_system_flutter/core/auth/auth_controller.dart';
 import 'package:lab_management_system_flutter/generated/lab_shared_generated.dart'
     hide AuthState;
 
 import 'receipt_detail_page.dart';
 import 'task_assign_dialog.dart';
 import 'task_queue_controller.dart';
+
+/// operator 解析链（M03.F01 详情页同款）：displayName 非空优先，否则
+/// userId；双空 = 无操作人身份 → act 按钮全禁（ADR-0019）。
+String? _resolveOperator(AuthState auth) => switch (auth) {
+  Authed(:final userId, :final displayName) =>
+    (displayName?.isNotEmpty ?? false) ? displayName : userId,
+  _ => null,
+};
 
 /// 任务分配队列（M03.F02.I01）：task_assignment 阶段单 + keyword 过滤 +
 /// 多选（act 批量，I05）+「安排」入口（I02）。
@@ -59,8 +69,56 @@ class _TaskQueuePageState extends ConsumerState<TaskQueuePage> {
   @override
   Widget build(BuildContext context) {
     final queueState = ref.watch(taskQueueControllerProvider);
+    // act 批量反馈： Acting→Loaded 过渡携 actFeedback 转 SnackBar 上屏，
+    // 状态自身保持 Loaded 不翻全屏错误（sample_ext saveError 同款）。
+    ref.listen<TaskQueueState>(taskQueueControllerProvider, (prev, next) {
+      if (prev is TaskQueueActing &&
+          next is TaskQueueLoaded &&
+          next.actFeedback != null) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(next.actFeedback!)));
+      }
+    });
+    final operator = _resolveOperator(ref.watch(authControllerProvider));
+    final acting = queueState is TaskQueueActing;
+    final hasSelection =
+        queueState is TaskQueueLoaded && queueState.selectedIds.isNotEmpty;
+    final actEnabled = hasSelection && !acting && operator != null;
+    void runAct(FlowAction action) =>
+        ref.read(taskQueueControllerProvider.notifier).runAct(action);
     return Scaffold(
       appBar: AppBar(title: const Text('任务分配')),
+      // act 操作条（I05）：仅 Loaded/Acting 态上屏；零勾选/acting/无身份全禁。
+      bottomNavigationBar: queueState is TaskQueueLoaded
+          ? SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(12, 4, 12, 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    TextButton(
+                      onPressed: actEnabled
+                          ? () => runAct(FlowAction.submit)
+                          : null,
+                      child: const Text('提交到数据录入'),
+                    ),
+                    TextButton(
+                      onPressed: actEnabled
+                          ? () => runAct(FlowAction.return_)
+                          : null,
+                      child: const Text('退回接样'),
+                    ),
+                    TextButton(
+                      onPressed: actEnabled
+                          ? () => runAct(FlowAction.withdraw)
+                          : null,
+                      child: const Text('撤回'),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          : null,
       body: Column(
         children: [
           Padding(
