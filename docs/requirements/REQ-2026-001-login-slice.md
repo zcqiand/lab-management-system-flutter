@@ -5,7 +5,7 @@
 | 提出人 | zcqiand |
 | 提出日期 | 2026-10-05 |
 | 优先级 | P1 |
-| 状态 | **开发中**（代码+测试全绿，GA 翻转待 Phase 2 真后端联调人工验收） |
+| 状态 | **已上线**（GA 2026-10-07：Phase 2 联调人工验收通过同批翻转，见 §7） |
 | 关联 ADR | —（本仓尚无 ADR） |
 | 上游 | lab-management-system-shared TypeSpec SSOT（需求与 API 基线）；已批 spec `xr-code-suite/docs/superpowers/specs/2026-10-05-lab-flutter-phase1-auth-design.md`；lab-react 登录实现为交互参照；lab-swift REQ-2026-003 Q4-C（原生通道人裁）；saas-flutter Phase 1（tag v0.2.0-20261005）为配方参照 |
 
@@ -88,3 +88,12 @@ SSO（I03 → Phase 3）；refresh 流程；/auth/me 与 M00.F01 翻转；租户
 | Web 端 token 存储实为 localStorage 级 | Web 会话安全 | 与 react 参照同级，诚实记录不夸大；Android 真机 Keystore 级 | — |
 | 401 无自动刷新，长会话被踢登录页 | 用户体验 | 契约无 refresh 端点；saas-react 先例同款；Phase 3 SSO 再看 | — |
 | Phase 1 整体回归 | 本切片全部 | git revert Phase 1 commit 集；树回退另走 tree_change 提案 | git revert |
+
+## 7. 人工验收记录（GA 前置锚）
+
+- **✅ 2026-10-07 人工验收通过**：本 REQ 自述 GA 触发条件即「Phase 2 真后端联调
+  人工验收」——该验收当日过（REQ-2026-004 M03.F02 任务分配切片，人批同日给出，
+  实录 `ACCEPTANCE-2026-10-06-m03f02.md`）：AC-1 首步即本切片登录闭环实证
+  （alice/dev123456 → 登录 → 5208 队列真数据 33 行）；测试 95/95 全绿含本切片
+  Auth/Login/登出用例；门禁 EXIT=0。GA 翻转 M01.F05.I02/I04/I06 共 3 行随批执行
+  （`tree_change.py --apply` 免批通道；模块/F 行不在本 REQ 影响面不动）。
