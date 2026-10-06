@@ -8,7 +8,8 @@ void main() {
   test('receiptJson 经 standardSerializers 解码为 SampleReceipt（必填面齐）', () {
     final json = receiptJson();
     final receipt = standardSerializers.deserializeWith(
-      SampleReceipt.serializer, json,
+      SampleReceipt.serializer,
+      json,
     )!;
     expect(receipt.id, 'r-1');
     expect(receipt.commissionCode, 'WT-2026-001');
@@ -18,7 +19,8 @@ void main() {
 
   test('sampleJson 解码：ext map 进 BuiltMap', () {
     final sample = standardSerializers.deserializeWith(
-      Sample.serializer, sampleJson(ext: {'slump': '180'}),
+      Sample.serializer,
+      sampleJson(ext: {'slump': '180'}),
     )!;
     expect(sample.sampleCode, 'S-001');
     expect(sample.ext['slump'], '180');
@@ -26,7 +28,8 @@ void main() {
 
   test('historyJson 解码：operator wire 名 + 枚举 from/to', () {
     final entry = standardSerializers.deserializeWith(
-      FlowHistoryEntry.serializer, historyJson(),
+      FlowHistoryEntry.serializer,
+      historyJson(),
     )!;
     expect(entry.operator_, 'alice');
     expect(entry.from, FlowStatus.receiving);
@@ -48,11 +51,17 @@ void main() {
     // 先过包装 serializer，再取 items.single 断言 extFields。
     final resp = standardSerializers.deserializeWith(
       ReportNamesListReportNames200Response.serializer,
-      reportNamesJson(extFieldDefs: [
-        extFieldDefJson(key: 'slump', label: '坍落度', type: 'text'),
-        extFieldDefJson(key: 'strength', label: '强度等级', type: 'select',
-            options: ['C30', 'C35']),
-      ]),
+      reportNamesJson(
+        extFieldDefs: [
+          extFieldDefJson(key: 'slump', label: '坍落度', type: 'text'),
+          extFieldDefJson(
+            key: 'strength',
+            label: '强度等级',
+            type: 'select',
+            options: ['C30', 'C35'],
+          ),
+        ],
+      ),
     )!;
     final name = resp.items.single;
     expect(name.extFields!.length, 2);

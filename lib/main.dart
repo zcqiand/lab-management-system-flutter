@@ -5,6 +5,7 @@ import 'core/auth/auth_controller.dart';
 import 'core/auth/auth_state.dart';
 import 'core/auth/login_page.dart';
 import 'core/config/app_config.dart';
+import 'features/receipts/receipts_list_page.dart';
 
 void main() {
   AppConfig.validate(); // fail-fast：配置缺失不进 UI（suite 硬规则 §1）
@@ -25,7 +26,7 @@ class LabFlutterApp extends ConsumerWidget {
         AuthAnonymous() ||
         AuthFailed() ||
         AuthSubmitting() => const LoginPage(),
-        Authed() => const _Shell(),
+        Authed() => const ReceiptsListPage(),
       },
     );
   }
@@ -37,26 +38,4 @@ class _Splash extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
       const Scaffold(body: Center(child: CircularProgressIndicator()));
-}
-
-/// Phase 1 占位壳：Phase 2 业务页落地前的已登录视图（含登出出口）。
-class _Shell extends ConsumerWidget {
-  const _Shell();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('实验室管理系统 Flutter 端'),
-        actions: [
-          IconButton(
-            tooltip: '登出',
-            icon: const Icon(Icons.logout),
-            onPressed: () => ref.read(authControllerProvider.notifier).logout(),
-          ),
-        ],
-      ),
-      body: const Center(child: Text('已登录（Phase 1 占位壳）')),
-    );
-  }
 }

@@ -64,19 +64,29 @@ Map<String, dynamic> historyJson({
   String at = '2026-10-02T09:00:00Z',
   String? reason,
 }) => <String, dynamic>{
-      'action': action,
-      'from': from,
-      'to': to,
-      'operator': operator_, // wire 名
-      'at': at,
-      'reason': ?reason, // null-aware element：reason 为 null 时整键省略
-    };
+  'action': action,
+  'from': from,
+  'to': to,
+  'operator': operator_, // wire 名
+  'at': at,
+  'reason': ?reason, // null-aware element：reason 为 null 时整键省略
+};
 
 Map<String, dynamic> receiptListJson(List<Map<String, dynamic>> items) =>
-    <String, dynamic>{'items': items, 'page': 1, 'pageSize': 20, 'total': items.length};
+    <String, dynamic>{
+      'items': items,
+      'page': 1,
+      'pageSize': 20,
+      'total': items.length,
+    };
 
 Map<String, dynamic> samplesListJson(List<Map<String, dynamic>> items) =>
-    <String, dynamic>{'items': items, 'page': 1, 'pageSize': 20, 'total': items.length};
+    <String, dynamic>{
+      'items': items,
+      'page': 1,
+      'pageSize': 20,
+      'total': items.length,
+    };
 
 Map<String, dynamic> extFieldDefJson({
   String key = 'slump',
@@ -84,31 +94,31 @@ Map<String, dynamic> extFieldDefJson({
   String type = 'text',
   bool required_ = false,
   List<String> options = const [],
-}) =>
-    <String, dynamic>{
-      'key': key,
-      'label': label,
-      'type': type,
-      'required': required_,
-      if (options.isNotEmpty) 'options': options,
-    };
+}) => <String, dynamic>{
+  'key': key,
+  'label': label,
+  'type': type,
+  'required': required_,
+  if (options.isNotEmpty) 'options': options,
+};
 
-Map<String, dynamic> reportNamesJson({required List<Map<String, dynamic>> extFieldDefs}) =>
-    <String, dynamic>{
-      'items': [
-        {
-          'code': 'xkkz',
-          'name': '普通混凝土试块',
-          'sortOrder': 1,
-          'createdAt': _now,
-          'updatedAt': _now,
-          'extFields': extFieldDefs,
-        }
-      ],
-      'page': 1,
-      'pageSize': 200,
-      'total': 1,
-    };
+Map<String, dynamic> reportNamesJson({
+  required List<Map<String, dynamic>> extFieldDefs,
+}) => <String, dynamic>{
+  'items': [
+    {
+      'code': 'xkkz',
+      'name': '普通混凝土试块',
+      'sortOrder': 1,
+      'createdAt': _now,
+      'updatedAt': _now,
+      'extFields': extFieldDefs,
+    },
+  ],
+  'page': 1,
+  'pageSize': 200,
+  'total': 1,
+};
 
 /// 测试 rig：UrlRequestMatcher（body 匹配坑，flutter-stack-ledger ⑥）。
 (Dio, DioAdapter) receiptRig() {

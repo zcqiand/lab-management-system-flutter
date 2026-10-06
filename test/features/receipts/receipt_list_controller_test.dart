@@ -12,9 +12,8 @@ import '../../fakes/throwing_adapter.dart';
 import '../../support/receipt_fixtures.dart';
 
 /// 测试装配：dioProvider override 成 rig 的裸 Dio（G-6：链上无 interceptor）。
-ProviderContainer _container(Dio dio) => ProviderContainer(
-      overrides: [dioProvider.overrideWithValue(dio)],
-    );
+ProviderContainer _container(Dio dio) =>
+    ProviderContainer(overrides: [dioProvider.overrideWithValue(dio)]);
 
 void main() {
   test('初态 loading', () async {
@@ -25,7 +24,10 @@ void main() {
     );
     final container = _container(dio);
     addTearDown(container.dispose);
-    expect(container.read(receiptListControllerProvider), isA<ReceiptListLoading>());
+    expect(
+      container.read(receiptListControllerProvider),
+      isA<ReceiptListLoading>(),
+    );
   });
 
   test('load 成功 → loaded（items 进态）', () async {
@@ -52,7 +54,10 @@ void main() {
     final container = _container(dio);
     addTearDown(container.dispose);
     await container.read(receiptListControllerProvider.notifier).load();
-    expect(container.read(receiptListControllerProvider), isA<ReceiptListEmpty>());
+    expect(
+      container.read(receiptListControllerProvider),
+      isA<ReceiptListEmpty>(),
+    );
   });
 
   test('无响应 → 「无法连接服务器」（ThrowingAdapter）', () async {
@@ -61,7 +66,8 @@ void main() {
     final container = _container(dio);
     addTearDown(container.dispose);
     await container.read(receiptListControllerProvider.notifier).load();
-    final state = container.read(receiptListControllerProvider) as ReceiptListError;
+    final state =
+        container.read(receiptListControllerProvider) as ReceiptListError;
     expect(state.message, '无法连接服务器');
   });
 
@@ -74,23 +80,21 @@ void main() {
     final container = _container(dio);
     addTearDown(container.dispose);
     await container.read(receiptListControllerProvider.notifier).load();
-    final state = container.read(receiptListControllerProvider) as ReceiptListError;
+    final state =
+        container.read(receiptListControllerProvider) as ReceiptListError;
     expect(state.message, '加载失败，请重试');
   });
 
   test('flowStatus 过滤参数上链（query 捕获断言）', () async {
     final (dio, adapter) = receiptRig();
     Map<String, String>? captured;
-    adapter.onGet(
-      '/api/receipts',
-      (server) {
-        // 0.6.1：请求期拿 RequestOptions 走 replyCallback 的 data 回调（server 本身无 uri）。
-        server.replyCallback(200, (options) {
-          captured = options.uri.queryParameters;
-          return receiptListJson([receiptJson(id: 'r-2')]);
-        });
-      },
-    );
+    adapter.onGet('/api/receipts', (server) {
+      // 0.6.1：请求期拿 RequestOptions 走 replyCallback 的 data 回调（server 本身无 uri）。
+      server.replyCallback(200, (options) {
+        captured = options.uri.queryParameters;
+        return receiptListJson([receiptJson(id: 'r-2')]);
+      });
+    });
     final container = _container(dio);
     addTearDown(container.dispose);
     await container
@@ -102,15 +106,12 @@ void main() {
   test('contractId+keyword 双过滤上链', () async {
     final (dio, adapter) = receiptRig();
     Map<String, String>? captured;
-    adapter.onGet(
-      '/api/receipts',
-      (server) {
-        server.replyCallback(200, (options) {
-          captured = options.uri.queryParameters;
-          return receiptListJson([receiptJson(id: 'r-3')]);
-        });
-      },
-    );
+    adapter.onGet('/api/receipts', (server) {
+      server.replyCallback(200, (options) {
+        captured = options.uri.queryParameters;
+        return receiptListJson([receiptJson(id: 'r-3')]);
+      });
+    });
     final container = _container(dio);
     addTearDown(container.dispose);
     await container

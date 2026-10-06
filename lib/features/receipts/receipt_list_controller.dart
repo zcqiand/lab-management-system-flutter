@@ -94,5 +94,5 @@ class ReceiptListController extends Notifier<ReceiptListState> {
 /// Produces 契约：NotifierProvider 默认 keepAlive（不挂 autoDispose）。
 final receiptListControllerProvider =
     NotifierProvider<ReceiptListController, ReceiptListState>(
-  ReceiptListController.new,
-);
+      ReceiptListController.new,
+    );
