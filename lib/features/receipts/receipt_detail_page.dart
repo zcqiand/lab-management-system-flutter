@@ -9,6 +9,7 @@ import 'package:lab_management_system_flutter/generated/lab_shared_generated.dar
 
 import 'flow_status_label.dart';
 import 'receipt_detail_controller.dart';
+import 'receipt_form_controller.dart';
 import 'receipt_form_page.dart';
 import 'receipt_list_controller.dart';
 import 'sample_ext_page.dart';
@@ -94,6 +95,16 @@ class _ReceiptDetailPageState extends ConsumerState<ReceiptDetailPage> {
           notifier.load(silent: true);
         }
         Navigator.of(context).pop();
+      }
+    });
+    // 编辑保存成功监听（终审 I-2）：编辑入口在本页（「编辑接样单」按钮），
+    // Form Success pop 回来必须重载，否则详情还是旧值「像没保存」——与 ext
+    // Saved 监听（sample_ext_page 同构）对齐：保存回详情路径都重载。
+    ref.listen<ReceiptFormState>(receiptFormControllerProvider, (prev, next) {
+      if (next is ReceiptFormSuccess) {
+        ref
+            .read(receiptDetailControllerProvider.notifier)
+            .load(id: widget.receiptId);
       }
     });
     final detailState = ref.watch(receiptDetailControllerProvider);

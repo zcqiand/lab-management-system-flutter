@@ -6,6 +6,7 @@ import 'package:http_mock_adapter/http_mock_adapter.dart';
 
 import 'package:lab_management_system_flutter/core/auth/providers.dart';
 import 'package:lab_management_system_flutter/features/receipts/receipt_detail_page.dart';
+import 'package:lab_management_system_flutter/features/receipts/receipt_form_page.dart';
 
 import '../../fakes/throwing_adapter.dart';
 import '../../support/receipt_fixtures.dart';
@@ -103,5 +104,75 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('无法连接服务器'), findsOneWidget);
     expect(find.text('重试'), findsOneWidget);
+  });
+
+  testWidgets('编辑保存成功 → 详情重载显示新值（// fn: M03.F01.I02）', (tester) async {
+    // fn: M03.F01.I02
+    // I-2 回归钉：编辑入口在详情页，保存成功 pop 回详情必须重载——否则用户
+    // 改了委托编号回来看到旧值，「像没保存」。可变 mock 体：PUT 落地后翻新
+    // GET 回包，详情重载才拿得到新值（Form Success 的列表 silent 刷新也走
+    // GET /api/receipts，一并注册）。
+    final dio = Dio();
+    // matchMethod: true 必开（receipt_delete_test 同款救援）——GET/PUT 同路径
+    // /api/receipts/r-1，默认 matcher 不比 method 且 last-match-wins，PUT 路由
+    // 会吞掉详情 GET（计数落空、回包走 PUT 回调）。
+    final adapter = DioAdapter(
+      dio: dio,
+      matcher: const UrlRequestMatcher(matchMethod: true),
+    );
+    var detailCalls = 0;
+    var current = receiptJson();
+    adapter.onGet('/api/receipts/r-1', (server) {
+      server.reply(200, (RequestOptions options) {
+        detailCalls++;
+        return current;
+      });
+    });
+    adapter.onGet(
+      '/api/receipts/r-1/history',
+      (server) => server.reply(200, <dynamic>[]),
+    );
+    adapter.onGet(
+      '/api/samples',
+      (server) => server.reply(200, samplesListJson([])),
+    );
+    adapter.onGet(
+      '/api/receipts',
+      (server) => server.reply(200, receiptListJson(const [])),
+    );
+    adapter.onPut('/api/receipts/r-1', (server) {
+      server.reply(200, (RequestOptions options) {
+        if (options.method == 'PUT') {
+          current = receiptJson(overrides: {'commissionCode': 'WT-2026-077'});
+        }
+        return current;
+      });
+    });
+    // act 按钮组/编辑入口在 ListView 尾部，拉高试面（同 pumpDetail 姿态）。
+    tester.view.physicalSize = const Size(800, 2400);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [dioProvider.overrideWithValue(dio)],
+        child: const MaterialApp(home: ReceiptDetailPage(receiptId: 'r-1')),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('WT-2026-001'), findsOneWidget);
+
+    await tester.tap(find.text('编辑接样单'));
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.widgetWithText(TextFormField, '委托编号'),
+      'WT-2026-077',
+    );
+    await tester.tap(find.byType(FilledButton));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(ReceiptFormPage), findsNothing); // 已 pop 回详情
+    expect(detailCalls, 2); // 初次 + 保存后重载
+    expect(find.text('WT-2026-077'), findsOneWidget); // 详情字段已更新
   });
 }
