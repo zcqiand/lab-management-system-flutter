@@ -52,6 +52,8 @@ class ReceiptListController extends Notifier<ReceiptListState> {
   }
 
   /// silent=true 不闪 loading（下拉刷新复用）。
+  /// autoDispose 后 await 间隙 provider 可能已 dispose（页面 pop/登出）——
+  /// 醒来先查 ref.mounted，陈旧响应丢弃不写 state（riverpod UnmountedRefException）。
   Future<void> load({
     String? contractId,
     FlowStatus? flowStatus,
@@ -65,6 +67,7 @@ class ReceiptListController extends Notifier<ReceiptListState> {
         flowStatus: flowStatus,
         keyword: keyword,
       );
+      if (!ref.mounted) return;
       final items = response.data?.items ?? BuiltList<SampleReceipt>();
       if (items.isEmpty) {
         state = ReceiptListEmpty(
@@ -81,6 +84,7 @@ class ReceiptListController extends Notifier<ReceiptListState> {
         );
       }
     } on DioException catch (e) {
+      if (!ref.mounted) return;
       state = ReceiptListError(message: _mapError(e));
     }
   }
@@ -91,8 +95,10 @@ class ReceiptListController extends Notifier<ReceiptListState> {
   }
 }
 
-/// Produces 契约：NotifierProvider 默认 keepAlive（不挂 autoDispose）。
+/// Produces 契约：autoDispose（终审 C-1/I-3/T5d 收口）——页级业务 provider
+/// 随页面 pop 即 dispose，杜绝 keepAlive 陈旧态跨页渗漏（列表→详情 r-1→
+/// 返回→r-2 首帧闪错单、登出换账号闪前租户数据）；api 等无状态 provider 不动。
 final receiptListControllerProvider =
-    NotifierProvider<ReceiptListController, ReceiptListState>(
+    NotifierProvider.autoDispose<ReceiptListController, ReceiptListState>(
       ReceiptListController.new,
     );

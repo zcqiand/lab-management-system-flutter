@@ -12,8 +12,16 @@ import '../../fakes/throwing_adapter.dart';
 import '../../support/receipt_fixtures.dart';
 
 /// 测试装配：dioProvider override 成 rig 的裸 Dio（G-6：链上无 interceptor）。
-ProviderContainer _container(Dio dio) =>
-    ProviderContainer(overrides: [dioProvider.overrideWithValue(dio)]);
+/// listen 探持（C-1 rig 小改）：provider 已 autoDispose，container.read 不计
+/// 监听者、无监听元素当拍即被调度 dispose（riverpod 3 mayNeedDispose），load
+/// 的 state 写会撞 UnmountedRefException——listen 挂住保活，断言语义不变。
+ProviderContainer _container(Dio dio) {
+  final container = ProviderContainer(
+    overrides: [dioProvider.overrideWithValue(dio)],
+  );
+  container.listen(receiptListControllerProvider, (_, _) {});
+  return container;
+}
 
 void main() {
   test('初态 loading', () async {

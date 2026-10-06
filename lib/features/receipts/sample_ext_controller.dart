@@ -55,6 +55,8 @@ class SampleExtController extends Notifier<SampleExtState> {
 
   /// ext 定义真源 = reportNames（pageSize 200）按 categoryCode 匹配；
   /// source=receipt 的定义滤掉（swift REQ-2026-008 同构，source 为 null 保留）。
+  /// autoDispose 后 await 间隙 provider 可能已 dispose（页面 pop）——醒来先查
+  /// ref.mounted，陈旧响应丢弃不写 state（其余 controller 同纪律）。
   Future<void> load({
     required String categoryCode,
     required Sample sample,
@@ -64,6 +66,7 @@ class SampleExtController extends Notifier<SampleExtState> {
         page: 1,
         pageSize: 200,
       );
+      if (!ref.mounted) return;
       final names = resp.data?.items ?? BuiltList<InspectionReportName>();
       final defs =
           names
@@ -80,8 +83,10 @@ class SampleExtController extends Notifier<SampleExtState> {
         originalExt: sample.ext,
       );
     } on SampleExtDefNotFound {
+      if (!ref.mounted) return;
       state = const SampleExtError('该类别无扩展属性定义');
     } on DioException catch (e) {
+      if (!ref.mounted) return;
       state = SampleExtError(_mapError(e));
     }
   }
@@ -126,8 +131,10 @@ class SampleExtController extends Notifier<SampleExtState> {
           (b) => b..ext = MapBuilder<String, String>(merged),
         ),
       );
+      if (!ref.mounted) return;
       state = const SampleExtSaved();
     } on DioException catch (e) {
+      if (!ref.mounted) return;
       state = SampleExtError(_mapError(e));
     }
   }
@@ -142,7 +149,10 @@ class SampleExtDefNotFound implements Exception {
   const SampleExtDefNotFound();
 }
 
+/// autoDispose（终审 C-1 收口）：ext 页 pop 即 dispose——push 下一样品拿到
+/// 全新 Loading，controller 以新样品 originalExt 建（keepAlive 时首帧以陈旧
+/// Ready(前样品) 建 controller 且 putIfAbsent 永不刷新，保存即跨样品写坏）。
 final sampleExtControllerProvider =
-    NotifierProvider<SampleExtController, SampleExtState>(
+    NotifierProvider.autoDispose<SampleExtController, SampleExtState>(
       SampleExtController.new,
     );

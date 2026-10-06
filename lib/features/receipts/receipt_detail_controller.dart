@@ -48,6 +48,8 @@ class ReceiptDetailController extends Notifier<ReceiptDetailState> {
     return ReceiptDetailLoading();
   }
 
+  /// autoDispose 后 await 间隙 provider 可能已 dispose（页面 pop）——醒来先查
+  /// ref.mounted，陈旧响应丢弃不写 state（receiptListController 同纪律）。
   Future<void> load({required String id}) async {
     _currentId = id;
     try {
@@ -55,6 +57,7 @@ class ReceiptDetailController extends Notifier<ReceiptDetailState> {
       final historyResp = await _receiptsApi.receiptsGetReceiptHistory(id: id);
       final samplesResp = await _samplesApi.samplesListSamples(receiptId: id);
       if (_currentId != id) return; // 过期响应丢弃
+      if (!ref.mounted) return; // autoDispose：页面 pop 后丢陈旧响应
       state = ReceiptDetailLoaded(
         receipt: detailResp.data!,
         history: historyResp.data ?? BuiltList<FlowHistoryEntry>(),
@@ -62,6 +65,7 @@ class ReceiptDetailController extends Notifier<ReceiptDetailState> {
       );
     } on DioException catch (e) {
       if (_currentId != id) return;
+      if (!ref.mounted) return;
       state = ReceiptDetailError(_mapError(e));
     }
   }
@@ -76,8 +80,10 @@ class ReceiptDetailController extends Notifier<ReceiptDetailState> {
     _deleting = true;
     try {
       await _receiptsApi.receiptsDeleteReceipt(id: id);
+      if (!ref.mounted) return; // autoDispose：页面 pop 后丢陈旧响应
       state = const ReceiptDetailDeleted();
     } on DioException catch (e) {
+      if (!ref.mounted) return;
       state = ReceiptDetailError(_mapError(e));
     } finally {
       _deleting = false;
@@ -109,6 +115,7 @@ class ReceiptDetailController extends Notifier<ReceiptDetailState> {
       await load(id: id); // 新 flowStatus + history 增量
     } on DioException catch (e) {
       if (!_acting) return;
+      if (!ref.mounted) return; // autoDispose：页面 pop 后丢陈旧响应
       if (e.response?.statusCode == 422) {
         state = ReceiptDetailError('当前阶段不可退回');
       } else {
@@ -125,7 +132,9 @@ class ReceiptDetailController extends Notifier<ReceiptDetailState> {
   }
 }
 
+/// autoDispose（终审 C-1/I-3 收口，receiptListControllerProvider 同理）：
+/// 详情 r-1 → 返回 → r-2 不再首帧闪 r-1 的全字段表。
 final receiptDetailControllerProvider =
-    NotifierProvider<ReceiptDetailController, ReceiptDetailState>(
+    NotifierProvider.autoDispose<ReceiptDetailController, ReceiptDetailState>(
       ReceiptDetailController.new,
     );

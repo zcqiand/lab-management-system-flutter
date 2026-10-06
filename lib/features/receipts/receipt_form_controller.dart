@@ -39,6 +39,8 @@ class ReceiptFormController extends Notifier<ReceiptFormState> {
   }
 
   /// submitting 期再调 = no-op（防抖，Review Focus 5）。
+  /// autoDispose 后 await 间隙 provider 可能已 dispose（页面 pop）——醒来先查
+  /// ref.mounted，陈旧响应丢弃不写 state（其余 controller 同纪律）。
   Future<void> submitCreate(CreateSampleReceiptRequest req) async {
     if (state is ReceiptFormSubmitting) return;
     state = const ReceiptFormSubmitting();
@@ -46,8 +48,10 @@ class ReceiptFormController extends Notifier<ReceiptFormState> {
       final resp = await _api.receiptsCreateReceipt(
         createSampleReceiptRequest: req,
       );
+      if (!ref.mounted) return;
       state = ReceiptFormSuccess(resp.data!);
     } on DioException catch (e) {
+      if (!ref.mounted) return;
       state = ReceiptFormError(_mapError(e));
     }
   }
@@ -64,8 +68,10 @@ class ReceiptFormController extends Notifier<ReceiptFormState> {
         id: id,
         updateSampleReceiptRequest: req,
       );
+      if (!ref.mounted) return;
       state = ReceiptFormSuccess(resp.data!);
     } on DioException catch (e) {
+      if (!ref.mounted) return;
       state = ReceiptFormError(_mapError(e));
     }
   }
@@ -77,7 +83,8 @@ class ReceiptFormController extends Notifier<ReceiptFormState> {
   }
 }
 
+/// autoDispose（终审 T5d/C-1 收口）：Success 态不再永驻，表单关页即复位。
 final receiptFormControllerProvider =
-    NotifierProvider<ReceiptFormController, ReceiptFormState>(
+    NotifierProvider.autoDispose<ReceiptFormController, ReceiptFormState>(
       ReceiptFormController.new,
     );

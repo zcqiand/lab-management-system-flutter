@@ -153,4 +153,66 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('保存中'), findsNothing); // Saving 态已过
   });
+
+  testWidgets('跨样品渗漏回归：ext(A) 不保存返回 → ext(B) 保存不带 A 的值（// fn: M03.F01.I07）', (
+    tester,
+  ) async {
+    // fn: M03.F01.I07
+    // C-1 回归钉（终审复现路径，同一 ProviderScope 内 push/pop）：provider
+    // keepAlive 时 ext(A) 页 state 停在 Ready(A)，push ext(B) 首帧以陈旧
+    // Ready(A) 建 controller（putIfAbsent 永不刷新），不动表单直接保存会把
+    // A 的值覆写进 B 的 PUT 体——渗漏变体此处必红（拿到 A 的 '120'）。
+    // autoDispose 后 push B 拿全新 Loading，controller 以 B 原值创建。
+    final sampleA = standardSerializers.deserializeWith(
+      Sample.serializer,
+      sampleJson(id: 's-1', ext: {'slump': '120'}),
+    )!;
+    final sampleB = standardSerializers.deserializeWith(
+      Sample.serializer,
+      sampleJson(id: 's-2', ext: {'slump': '200'}),
+    )!;
+    // 闭包按引用捕获：第二次 open-ext 时已指向 B。
+    var pushed = sampleA;
+    adapter.onPut('/api/samples/s-2/ext', (server) {
+      server.reply(200, (RequestOptions options) {
+        if (options.method == 'PUT') {
+          putBody = standardSerializers.deserializeWith(
+            UpdateSampleExtRequest.serializer,
+            options.data as Map<String, dynamic>,
+          )!;
+        }
+        return sampleJson(id: 's-2', ext: {'slump': '200'});
+      });
+    });
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [dioProvider.overrideWithValue(dio)],
+        child: MaterialApp(
+          home: Builder(
+            builder: (context) => TextButton(
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute<void>(
+                  builder: (_) =>
+                      SampleExtPage(sample: pushed, categoryCode: 'xkkz'),
+                ),
+              ),
+              child: const Text('open-ext'),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.tap(find.text('open-ext'));
+    await tester.pumpAndSettle(); // ext(A) 就绪：controller 以 A 值建
+    await tester.pageBack(); // 不保存返回
+    await tester.pumpAndSettle(); // pop；autoDispose 在此 dispose provider
+    pushed = sampleB;
+    await tester.tap(find.text('open-ext'));
+    await tester.pumpAndSettle(); // ext(B) 就绪
+    await tester.tap(find.byType(FilledButton)); // 不动表单直接保存
+    await tester.pumpAndSettle();
+    expect(putBody, isNotNull);
+    expect(putBody!.ext['slump'], '200'); // B 原键原值，A 的 '120' 不得渗入
+  });
 }
