@@ -71,3 +71,7 @@ M03.F09.I03 报告预览：本切片不做，维持规划。
 | FlowAction.return_ 尾下划线笔误 | T7 | wire 名解码冒烟在 T1 证 | 编译红即修 |
 | ext 定义真源误接（extFields 在 InspectionReportName，不在 receipt/sample） | T8 | 已核实 `reportNamesListReportNames` 路径 + swift REQ-2026-008 同构 | 改 provider 单点 |
 | CORS 漏仓致联调 500（CORS origin not allowed 表现为 500 指纹） | T9 | 5 仓逐一追加 + 各仓门禁 | 补 env 一行 |
+
+## 7. 人工验收记录（GA 前置锚）
+
+- **✅ 2026-10-06 人工验收通过**：AC-1~AC-10 十项全过（清单 `.superpowers/sdd/2026-10-06-lab-flutter-phase2-m03f01/acceptance-checklist.md` 逐项过，人批同日给出）。环境：lab-nextjs `1fdd60b` `:5201`（CORS middleware 预检/登录实证）+ lab-flutter `4f8c3c5` `:5208`（`--dart-define=API_BASE_URL=http://localhost:5201`）；凭据 alice/dev123456。GA 翻转 11 行 + tag `v0.3.0-20261006` 随批执行；REQ-2026-001（Phase 1 基建切片）GA 同批入账。
