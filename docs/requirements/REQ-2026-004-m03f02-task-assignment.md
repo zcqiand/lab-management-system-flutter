@@ -36,6 +36,11 @@
 |---|---|---|---|---|
 | T1-T6 | 见实现计划（fixture → 队列页 → 安排弹窗 → act → trace/门禁 → 联调+GA） | 实现 | Claude | 开发中 |
 
+## 3.5 验收记录
+
+- 远门 2026-10-06：95/95 测试 + analyze 0 + suite 门禁全绿 EXIT=0；trace 恰 15 ID。
+- 人工验收：`ACCEPTANCE-2026-10-06-m03f02.md`（环境双台实证：5201 health ok + 5208 HTTP 200 + CORS 预检 204；AC-1~AC-4 待人工走查，通过后人批 GA 翻转 M03.F02 四行）。
+
 ## 4. 功能影响（需求与功能对齐的唯一位置）
 
 > ID 均已存在于 `docs/functions/function-tree.md`（Phase 0b 镜像登记，树行已引用本 REQ 号）。状态翻转随实现任务分批走（mirror 免批，reason 带 REQ-2026-004）；GA 翻转（→已上线）归联调人工验收后收尾。
