@@ -6,6 +6,7 @@ import 'package:lab_management_system_flutter/core/auth/auth_controller.dart';
 
 import 'flow_status_label.dart';
 import 'receipt_detail_page.dart';
+import 'receipt_form_page.dart';
 import 'receipt_list_controller.dart';
 
 /// 接样单列表（M03.F01.I01）。
@@ -38,6 +39,14 @@ class _ReceiptsListPageState extends ConsumerState<ReceiptsListPage> {
             onPressed: () => ref.read(authControllerProvider.notifier).logout(),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        tooltip: '新建接样单',
+        onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute<void>(builder: (_) => const ReceiptFormPage()),
+        ),
+        child: const Icon(Icons.add),
       ),
       body: switch (listState) {
         ReceiptListLoading() => const Center(
