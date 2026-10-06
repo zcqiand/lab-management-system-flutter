@@ -21,12 +21,17 @@ class SampleExtReady extends SampleExtState {
     required this.defs,
     required this.originalExt,
     this.errors = const <String>{},
+    this.saveError,
   });
   final BuiltList<ExtFieldDef> defs;
 
   /// 进页时的原始 ext 快照：合并保存的「现有 key 全保留」基线 + 控件预填源。
   final BuiltMap<String, String> originalExt;
   final Set<String> errors;
+
+  /// 保存失败文案（T8-2/T8-3）：save 的 DioException 不翻全屏 Error——回
+  /// Ready 保住 errors 与控件值，文案经页侧 SnackBar 上屏；null = 无保存错。
+  final String? saveError;
 }
 
 class SampleExtSaving extends SampleExtState {
@@ -93,13 +98,14 @@ class SampleExtController extends Notifier<SampleExtState> {
 
   /// 合并保存（M03.F01.I07，Review Focus 3）：必填校验不过不打端点；过 =
   /// 现有 key 全保留 + 表单非空值覆盖——空串绝不能抹掉已有值。防重入：
-  /// 非 Ready 态（含 Saving 期间再点）= no-op。
+  /// 非 Ready 态 = no-op（T8-4：state 与 s 同引用，「|| state is Saving」
+  /// 是永假死析取，删）。
   Future<void> save({
     required Sample sample,
     required Map<String, String> values,
   }) async {
     final s = state;
-    if (s is! SampleExtReady || state is SampleExtSaving) return;
+    if (s is! SampleExtReady) return;
     final errors = <String>{};
     for (final d in s.defs) {
       final v = (values[d.key] ?? '').trim();
@@ -134,14 +140,28 @@ class SampleExtController extends Notifier<SampleExtState> {
       if (!ref.mounted) return;
       state = const SampleExtSaved();
     } on DioException catch (e) {
+      // T8-2：失败不翻全屏 Error（丢录入）——回 Ready 保 errors/控件值，
+      // 文案经页侧 SnackBar 上屏。
       if (!ref.mounted) return;
-      state = SampleExtError(_mapError(e));
+      state = SampleExtReady(
+        defs: s.defs,
+        originalExt: s.originalExt,
+        errors: s.errors,
+        saveError: _saveError(e),
+      );
     }
   }
 
+  /// 加载失败文案（load 路径，G-10 三分支）。
   String _mapError(DioException e) {
     if (e.response == null) return '无法连接服务器';
     return '加载失败，请重试';
+  }
+
+  /// 保存失败文案（save 路径，T8-3：报「保存」不报「加载」）。
+  String _saveError(DioException e) {
+    if (e.response == null) return '无法连接服务器';
+    return '保存失败，请重试';
   }
 }
 

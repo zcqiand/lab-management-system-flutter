@@ -56,7 +56,9 @@ class ReceiptFormController extends Notifier<ReceiptFormState> {
     }
   }
 
-  /// PATCH 语义：UpdateSampleReceiptRequest 全字段可空，仅携带变更字段。
+  /// T5b 更正注释：本页发全部表单字段（UpdateSampleReceiptRequest 全字段
+  /// 可空，但页侧逐字段赋值），空文本即发空值——非 partial-payload，勿按
+  /// 「仅携带变更字段」假设改这里。
   Future<void> submitUpdate({
     required String id,
     required UpdateSampleReceiptRequest req,
@@ -79,7 +81,7 @@ class ReceiptFormController extends Notifier<ReceiptFormState> {
   String _mapError(DioException e) {
     if (e.response == null) return '无法连接服务器';
     if (e.response!.statusCode == 422) return '保存失败：数据未通过校验';
-    return '加载失败，请重试';
+    return '保存失败，请重试'; // T5c：本页只有保存动作，报「保存」不报「加载」
   }
 }
 

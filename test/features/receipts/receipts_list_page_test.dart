@@ -47,7 +47,7 @@ void main() {
     expect(find.text('xkkz · 接收登记 · 王接收'), findsOneWidget);
   });
 
-  testWidgets('empty/error/loading 三态渲染', (tester) async {
+  testWidgets('empty 态渲染（T3a 更名：原「三态渲染」实只驱动 empty）', (tester) async {
     final (dio, adapter) = receiptRig();
     adapter.onGet(
       '/api/receipts',

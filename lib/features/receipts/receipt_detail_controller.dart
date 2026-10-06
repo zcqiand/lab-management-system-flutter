@@ -114,7 +114,8 @@ class ReceiptDetailController extends Notifier<ReceiptDetailState> {
       );
       await load(id: id); // 新 flowStatus + history 增量
     } on DioException catch (e) {
-      if (!_acting) return;
+      // T7a：原「if (!_acting) return;」是可证死代码（try 前 _acting 恒
+      // true、重入在入口早退），它伪称有陈旧写防护——真防护是 ref.mounted。
       if (!ref.mounted) return; // autoDispose：页面 pop 后丢陈旧响应
       if (e.response?.statusCode == 422) {
         state = ReceiptDetailError('当前阶段不可退回');

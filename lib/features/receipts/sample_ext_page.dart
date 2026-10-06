@@ -65,6 +65,12 @@ class _SampleExtPageState extends ConsumerState<SampleExtPage> {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text(next.message)));
       }
+      // 保存失败（T8-2）：controller 回 Ready 保住表单，文案这里 SnackBar
+      // 上屏（状态自身仍 Ready，不翻全屏 Error）。
+      if (next is SampleExtReady && next.saveError != null) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(next.saveError!)));
+      }
     });
     return Scaffold(
       appBar: AppBar(title: const Text('ext 补录')),

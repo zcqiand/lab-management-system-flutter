@@ -3,7 +3,7 @@ import 'package:http_mock_adapter/http_mock_adapter.dart';
 
 // 共享 mock 体：SampleReceipt/Sample 必填面大（13/7 必填），逐测试重抄必爆仓。
 // 全部返回「DioAdapter 可直接 reply 的 JSON map」，字段清单 = 生成模型盘上核实
-// （2026-10-06）；overrides 深合并到顶层，测试只写差异字段。
+// （2026-10-06）；overrides 浅替换顶层键（T1a：非深合并），测试只写差异字段。
 // 本文件纯产 JSON map，不引生成 barrel（会 unused_import）——解码断言在
 // receipt_fixtures_test.dart 侧走 standardSerializers。
 
@@ -94,12 +94,14 @@ Map<String, dynamic> extFieldDefJson({
   String type = 'text',
   bool required_ = false,
   List<String> options = const [],
+  String? source,
 }) => <String, dynamic>{
   'key': key,
   'label': label,
   'type': type,
   'required': required_,
   if (options.isNotEmpty) 'options': options,
+  'source': ?source, // wire 名 source（模型 source_，T8-1）；null 时整键省略
 };
 
 Map<String, dynamic> reportNamesJson({

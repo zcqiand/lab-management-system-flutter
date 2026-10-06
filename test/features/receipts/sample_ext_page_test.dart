@@ -116,6 +116,61 @@ void main() {
     expect(find.text('必填'), findsOneWidget);
   });
 
+  testWidgets('保存失败回 Ready 不丢输入 + SnackBar 文案（// fn: M03.F01.I07）', (tester) async {
+    // fn: M03.F01.I07
+    // T8-2/T8-3 回归钉：瞬时网络/422 一次不能丢用户录入——save 的
+    // DioException 回 Ready（errors/控件值保留）+ SnackBar「保存失败，请
+    // 重试」，与表单页姿态对齐；修复前全屏 Error 顶掉表单必红。
+    adapter.onPut('/api/samples/s-1/ext', (server) {
+      // 后注册者胜：盖掉 setUp 的成功回包。
+      server.reply(500, {'code': 'INTERNAL', 'message': 'boom'},
+          delay: const Duration(milliseconds: 200));
+    });
+    await pumpExt(tester);
+    await tester.pumpAndSettle();
+    await tester.enterText(find.widgetWithText(TextFormField, '坍落度'), '188');
+    await tester.tap(find.byType(FilledButton));
+    await tester.pump(); // 保存发出
+    await tester.pump(const Duration(milliseconds: 300)); // 失败回包落地
+    expect(find.text('保存失败，请重试'), findsOneWidget); // SnackBar（save 文案）
+    expect(find.widgetWithText(TextFormField, '坍落度'), findsOneWidget); // 未翻全屏 Error
+    expect(find.text('188'), findsOneWidget); // 用户输入还在
+    await tester.pumpAndSettle(); // SnackBar 动画/dismiss 计时走完
+  });
+
+  testWidgets('source=receipt 的 ext 定义被排除（// fn: M03.F01.I07）', (tester) async {
+    // fn: M03.F01.I07
+    // T8-1 回归钉：补录页只认样品侧定义——source=receipt 滤掉、source=null
+    // 与 sample 保留（swift REQ-2026-008 同构）。
+    adapter.onGet('/api/report-names', (server) {
+      server.reply(
+        200,
+        reportNamesJson(
+          extFieldDefs: [
+            extFieldDefJson(key: 'slump', label: '坍落度', type: 'text'),
+            extFieldDefJson(
+              key: 'receiptOnly',
+              label: '登记侧字段',
+              type: 'text',
+              source: 'receipt',
+            ),
+            extFieldDefJson(
+              key: 'sampleOnly',
+              label: '样品侧字段',
+              type: 'text',
+              source: 'sample',
+            ),
+          ],
+        ),
+      );
+    });
+    await pumpExt(tester);
+    await tester.pumpAndSettle();
+    expect(find.text('坍落度'), findsOneWidget); // source=null 保留
+    expect(find.text('样品侧字段'), findsOneWidget); // source=sample 保留
+    expect(find.text('登记侧字段'), findsNothing); // source=receipt 排除
+  });
+
   testWidgets('保存合并：现有 key 全保留 + 非空覆盖（// fn: M03.F01.I07）', (tester) async {
     // fn: M03.F01.I07
     await pumpExt(tester);
@@ -146,12 +201,23 @@ void main() {
     expect(putBody!.ext['slump'], '120'); // 清空 ≠ 抹掉：回退原值
   });
 
-  testWidgets('保存成功回详情（pop）+ 详情重载', (tester) async {
+  testWidgets('保存成功回详情（pop）+ 详情重载（// fn: M03.F01.I07）', (tester) async {
+    // fn: M03.F01.I07
+    // T8-5 重写：原「'保存中' findsNothing」是永真断言（SUT 无此文案渲染，
+    // pop 与重载皆未验）。现注册详情 GET 断重载计数，pop 实断页面离栈。
+    var detailCalls = 0;
+    adapter.onGet('/api/receipts/r-1', (server) {
+      server.reply(200, (RequestOptions options) {
+        detailCalls++;
+        return receiptJson();
+      });
+    });
     await pumpExt(tester);
     await tester.pumpAndSettle();
     await tester.tap(find.byType(FilledButton));
     await tester.pumpAndSettle();
-    expect(find.text('保存中'), findsNothing); // Saving 态已过
+    expect(detailCalls, 1); // Saved 监听触发详情重载
+    expect(find.byType(SampleExtPage), findsNothing); // 已 pop
   });
 
   testWidgets('跨样品渗漏回归：ext(A) 不保存返回 → ext(B) 保存不带 A 的值（// fn: M03.F01.I07）', (
