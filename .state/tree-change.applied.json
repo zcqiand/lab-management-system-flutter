@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "approved": true,
+  "base_sha": "bcb0767a66d58d0f",
+  "mirror": true,
+  "summary": "M03.F01.I02 新建/编辑接样单表单页随切片 T5 交付推进开发中（REQ-2026-002）",
+  "changes": [
+    {
+      "id": "M03.F01.I02",
+      "action": "变更",
+      "name": "",
+      "reason": "REQ-2026-002（spec 2026-10-06-lab-flutter-phase2-m03f01-design）"
+    }
+  ],
+  "sync_files": []
+}
