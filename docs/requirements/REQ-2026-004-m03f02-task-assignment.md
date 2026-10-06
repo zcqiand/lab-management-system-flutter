@@ -36,10 +36,14 @@
 |---|---|---|---|---|
 | T1-T6 | 见实现计划（fixture → 队列页 → 安排弹窗 → act → trace/门禁 → 联调+GA） | 实现 | Claude | 开发中 |
 
-## 3.5 验收记录
+## 3.5 人工验收记录（GA 前置锚）
 
 - 远门 2026-10-06：95/95 测试 + analyze 0 + suite 门禁全绿 EXIT=0；trace 恰 15 ID。
-- 人工验收：`ACCEPTANCE-2026-10-06-m03f02.md`（环境双台实证：5201 health ok + 5208 HTTP 200 + CORS 预检 204；AC-1~AC-4 待人工走查，通过后人批 GA 翻转 M03.F02 四行）。
+- **✅ 2026-10-07 人工验收通过**：AC-1~AC-4b 全路径过（浏览器 http://localhost:5208
+  走队列/安排弹窗/act 三动作；环境与分场景实录见 `ACCEPTANCE-2026-10-06-m03f02.md`，
+  人批同日给出）。环境：lab-nextjs `:5201` + lab-flutter `:5208`；凭据 alice/dev123456。
+  GA 翻转 M03.F02 + I01/I02/I05 共 4 行随批执行（`tree_change.py --apply` 免批通道，
+  lab M03.F01 先例同构）。
 
 ## 4. 功能影响（需求与功能对齐的唯一位置）
 
