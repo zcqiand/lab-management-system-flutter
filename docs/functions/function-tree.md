@@ -46,7 +46,7 @@
 | M03.F01 | 接样管理（CRUD + 三态过滤） | 接样单列表/新建/编辑/删除 + act 提交/退回/撤回；REQ-2026-001 | 开发中 |
 | M03.F01.I01 | 接样单列表（三态过滤） | 页面：`GET /receipts` + filter 三态（全部/未提交/已提交） | 开发中 |
 | M03.F01.I02 | 新建/编辑接样单 | 按钮：POST/PUT `/receipts`（PATCH 语义） | 开发中 |
-| M03.F01.I03 | 删除接样单 | 按钮：DELETE `/receipts/{id}` | 规划 |
+| M03.F01.I03 | 删除接样单 | 按钮：DELETE `/receipts/{id}` | 开发中 |
 | M03.F01.I04 | 提交接样单（receiving → task_assignment） | 按钮：act `action=SUBMIT` | 规划 |
 | M03.F01.I06 | 接样单流程历史 | 接口：`GET /receipts/{id}/history` 渲染时间线 | 开发中 |
 | M03.F01.I07 | 接样单 ext 字段补录 | 接口：`GET /api/report-names`（取类别 extFields 定义）+ `PUT /api/samples/{id}/ext`（合并提交）；预览前补录门（家族 SampleExtFieldsModal 同款）；REQ-2026-008 | 规划 |

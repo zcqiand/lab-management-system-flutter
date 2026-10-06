@@ -7,6 +7,7 @@ import 'package:lab_management_system_flutter/generated/lab_shared_generated.dar
 
 import 'flow_status_label.dart';
 import 'receipt_detail_controller.dart';
+import 'receipt_list_controller.dart';
 
 /// 接样单详情（M03.F09.I01 全字段表 + M03.F01.I06/F09.I02 时间线双挂）。
 class ReceiptDetailPage extends ConsumerStatefulWidget {
@@ -28,11 +29,66 @@ class _ReceiptDetailPageState extends ConsumerState<ReceiptDetailPage> {
     );
   }
 
+  /// 删除确认弹窗（M03.F01.I03）：文案必须明示 CASCADE（同时删下属样品）。
+  Future<void> _confirmDelete() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('删除接样单'),
+        content: const Text('删除后不可恢复，将同时删除下属样品。确定删除？'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text('取消'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: const Text('确认删除'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true) {
+      await ref.read(receiptDetailControllerProvider.notifier).delete();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    // 删除成功监听（M03.F01.I03）：回列表 silent 刷新（保过滤器）后 pop——
+    // listen 必须挂在 build 内（Riverpod 契约）。
+    ref.listen<ReceiptDetailState>(receiptDetailControllerProvider, (
+      prev,
+      next,
+    ) {
+      if (next is ReceiptDetailDeleted) {
+        final s = ref.read(receiptListControllerProvider);
+        final notifier = ref.read(receiptListControllerProvider.notifier);
+        if (s is ReceiptListLoaded) {
+          notifier.load(
+            contractId: s.contractId,
+            flowStatus: s.flowStatus,
+            keyword: s.keyword,
+            silent: true,
+          );
+        } else {
+          notifier.load(silent: true);
+        }
+        Navigator.of(context).pop();
+      }
+    });
     final detailState = ref.watch(receiptDetailControllerProvider);
     return Scaffold(
-      appBar: AppBar(title: const Text('接样单详情')),
+      appBar: AppBar(
+        title: const Text('接样单详情'),
+        actions: [
+          IconButton(
+            tooltip: '删除',
+            icon: const Icon(Icons.delete_outline),
+            onPressed: _confirmDelete,
+          ),
+        ],
+      ),
       body: switch (detailState) {
         ReceiptDetailLoading() => const Center(
           child: CircularProgressIndicator(),
@@ -56,6 +112,10 @@ class _ReceiptDetailPageState extends ConsumerState<ReceiptDetailPage> {
           receipt: detailState.receipt,
           history: detailState.history,
           samples: detailState.samples,
+        ),
+        // Deleted 只渲染一帧（监听即 pop）——占位防闪黑，不参与交互。
+        ReceiptDetailDeleted() => const Center(
+          child: CircularProgressIndicator(),
         ),
       },
     );
