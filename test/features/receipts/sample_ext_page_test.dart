@@ -22,12 +22,15 @@ void main() {
   var putCalls = 0;
   UpdateSampleExtRequest? putBody;
 
-  Future<void> pumpExt(WidgetTester tester) async {
+  Future<void> pumpExt(WidgetTester tester, {Sample? sample}) async {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [dioProvider.overrideWithValue(dio)],
         child: MaterialApp(
-          home: SampleExtPage(sample: sampleWithExt, categoryCode: 'xkkz'),
+          home: SampleExtPage(
+            sample: sample ?? sampleWithExt,
+            categoryCode: 'xkkz',
+          ),
         ),
       ),
     );
@@ -127,13 +130,20 @@ void main() {
 
   testWidgets('空串不抹掉已有值（// fn: M03.F01.I07）', (tester) async {
     // fn: M03.F01.I07
-    await pumpExt(tester);
+    // 清空字段必须给非空原值才钉得住条款三：slump 原值 '120'，清空后保存
+    // 应回退原值——「键仍在」不够，存在即覆盖的坏合并变体也能过「键仍在」。
+    final sampleWithSlump = standardSerializers.deserializeWith(
+      Sample.serializer,
+      sampleJson(ext: {'strength': 'C30', 'slump': '120'}),
+    )!;
+    await pumpExt(tester, sample: sampleWithSlump);
     await tester.pumpAndSettle();
     await tester.enterText(find.widgetWithText(TextFormField, '坍落度'), '');
     await tester.tap(find.byType(FilledButton));
     await tester.pumpAndSettle();
     expect(putCalls, 1);
     expect(putBody!.ext.keys, contains('strength'));
+    expect(putBody!.ext['slump'], '120'); // 清空 ≠ 抹掉：回退原值
   });
 
   testWidgets('保存成功回详情（pop）+ 详情重载', (tester) async {
