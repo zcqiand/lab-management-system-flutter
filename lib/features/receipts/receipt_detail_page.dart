@@ -11,6 +11,7 @@ import 'flow_status_label.dart';
 import 'receipt_detail_controller.dart';
 import 'receipt_form_page.dart';
 import 'receipt_list_controller.dart';
+import 'sample_ext_page.dart';
 
 /// operator 解析链（M03.F01.I04/I08）：displayName 非空优先，否则 userId；
 /// 双空 = 无操作人身份 → act 按钮全禁。空串 displayName 不兜底（`??` 对空串
@@ -226,6 +227,17 @@ class _LoadedView extends ConsumerWidget {
           ListTile(
             title: Text(s.sampleCode),
             subtitle: s.ext.isEmpty ? null : Text(s.ext.keys.join('、')),
+            // ext 补录入口（M03.F01.I07）：点样品进补录页；保存成功回详情
+            // 重载（SampleExtPage 监听 Saved 态自行 pop + 触发 load）。
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute<void>(
+                builder: (_) => SampleExtPage(
+                  sample: s,
+                  categoryCode: receipt.categoryCode,
+                ),
+              ),
+            ),
           ),
         const Divider(height: 32),
         const Padding(
