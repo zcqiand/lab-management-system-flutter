@@ -70,9 +70,20 @@ void main() {
     final dio = Dio();
     await pumpDetail(tester, dio);
     await tester.pumpAndSettle();
-    // 10:00 的 submit 在 09:00 的 withdraw 之前（倒序）
-    final submitTop = tester.getTopLeft(find.text('提交')).dy;
-    final withdrawTop = tester.getTopLeft(find.text('撤回')).dy;
+    // 10:00 的 submit 在 09:00 的 withdraw 之前（倒序）。T7 起详情页新增
+    // act 按钮组（receiving 阶段渲染「提交/退回/撤回」FilledButton），裸
+    // find.text 与时间线同名词撞车（一找多必炸 getTopLeft）——只认时间线
+    // ListTile 内的文本。
+    final submitTop = tester
+        .getTopLeft(
+          find.descendant(of: find.byType(ListTile), matching: find.text('提交')),
+        )
+        .dy;
+    final withdrawTop = tester
+        .getTopLeft(
+          find.descendant(of: find.byType(ListTile), matching: find.text('撤回')),
+        )
+        .dy;
     expect(submitTop, lessThan(withdrawTop));
     // 页面副标题含操作人（接收登记 → 任务分配 · alice），用 textContaining 断言
     expect(find.textContaining('接收登记 → 任务分配'), findsOneWidget);
