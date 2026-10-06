@@ -2,7 +2,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:lab_management_system_flutter/generated/lab_shared_generated.dart'
+    hide AuthState;
+
 import 'receipt_detail_page.dart';
+import 'task_assign_dialog.dart';
 import 'task_queue_controller.dart';
 
 /// 任务分配队列（M03.F02.I01）：task_assignment 阶段单 + keyword 过滤 +
@@ -29,6 +33,20 @@ class _TaskQueuePageState extends ConsumerState<TaskQueuePage> {
   void dispose() {
     _keywordCtrl.dispose();
     super.dispose();
+  }
+
+  // 「安排」（I02 入口）：showDialog 承载安排弹窗；收窗（保存成功或取消）
+  // 后静默刷回——安排结果回行 subtitle，loading 不闪。
+  Future<void> _openAssign(SampleReceipt r) async {
+    await showDialog<void>(
+      context: context,
+      builder: (_) => TaskAssignDialog(receipt: r),
+    );
+    if (!mounted) return;
+    final kw = _keywordCtrl.text.trim();
+    await ref
+        .read(taskQueueControllerProvider.notifier)
+        .load(keyword: kw.isEmpty ? null : kw, silent: true);
   }
 
   void _submitKeyword() {
@@ -115,7 +133,21 @@ class _TaskQueuePageState extends ConsumerState<TaskQueuePage> {
                                 ? '${r.assigneeName} · ${r.plannedTestDate ?? '—'}'
                                 : '待安排检测人员',
                           ),
-                          secondary: assigned ? null : const Text('未安排'),
+                          secondary: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (!assigned)
+                                const Padding(
+                                  padding: EdgeInsets.only(right: 4),
+                                  child: Text('未安排'),
+                                ),
+                              IconButton(
+                                tooltip: '安排',
+                                icon: const Icon(Icons.edit_outlined),
+                                onPressed: () => _openAssign(r),
+                              ),
+                            ],
+                          ),
                         ),
                       );
                     },

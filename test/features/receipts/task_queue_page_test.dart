@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:lab_management_system_flutter/core/api/session_guard.dart';
 import 'package:lab_management_system_flutter/core/auth/providers.dart';
 import 'package:lab_management_system_flutter/features/receipts/receipts_list_page.dart';
+import 'package:lab_management_system_flutter/features/receipts/task_assign_dialog.dart';
 import 'package:lab_management_system_flutter/features/receipts/task_queue_page.dart';
 
 import '../../fakes/in_memory_token_store.dart';
@@ -129,6 +130,27 @@ void main() {
     await pumpQueue(tester, dio);
     expect(find.text('无法连接服务器'), findsOneWidget);
     expect(find.text('重试'), findsOneWidget);
+  });
+
+  testWidgets('行「安排」按钮 → 安排弹窗开（I02 入口接线）', (tester) async {
+    final (dio, adapter) = receiptRig();
+    adapter.onGet('/api/receipts', (server) {
+      server.reply(200, (RequestOptions options) {
+        final isQueue =
+            options.uri.queryParameters['flowStatus'] == 'task_assignment';
+        return isQueue
+            ? taskQueueJson([
+                receiptInTaskAssignmentJson(id: 'r-1', assignee: null),
+              ])
+            : receiptListJson(const []);
+      });
+    });
+    await pumpQueue(tester, dio);
+    expect(find.byType(TaskAssignDialog), findsNothing);
+    await tester.tap(find.byTooltip('安排'));
+    await tester.pumpAndSettle();
+    expect(find.byType(TaskAssignDialog), findsOneWidget);
+    expect(find.text('安排检测'), findsOneWidget);
   });
 
   testWidgets('接样列表 appbar 入口 → 队列页入栈', (tester) async {
