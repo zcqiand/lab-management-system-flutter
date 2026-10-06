@@ -41,16 +41,14 @@ class _ReceiptsListPageState extends ConsumerState<ReceiptsListPage> {
     super.dispose();
   }
 
-  ({String? contractId, FlowStatus? flowStatus, String? keyword}) get _filters =>
-      (
-        contractId: _contractIdCtrl.text.trim().isEmpty
-            ? null
-            : _contractIdCtrl.text.trim(),
-        flowStatus: _flowStatus,
-        keyword: _keywordCtrl.text.trim().isEmpty
-            ? null
-            : _keywordCtrl.text.trim(),
-      );
+  ({String? contractId, FlowStatus? flowStatus, String? keyword})
+  get _filters => (
+    contractId: _contractIdCtrl.text.trim().isEmpty
+        ? null
+        : _contractIdCtrl.text.trim(),
+    flowStatus: _flowStatus,
+    keyword: _keywordCtrl.text.trim().isEmpty ? null : _keywordCtrl.text.trim(),
+  );
 
   void _applyFilters() {
     final f = _filters;
@@ -164,52 +162,54 @@ class _ReceiptsListPageState extends ConsumerState<ReceiptsListPage> {
               ),
             ),
           ),
-          Expanded(child: switch (listState) {
-            ReceiptListLoading() => const Center(
-              child: CircularProgressIndicator(),
-            ),
-            ReceiptListEmpty() => const Center(child: Text('暂无接样单')),
-            ReceiptListError(:final message) => Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(message),
-                  const SizedBox(height: 8),
-                  FilledButton(
-                    onPressed: _applyFilters,
-                    child: const Text('重试'),
-                  ),
-                ],
+          Expanded(
+            child: switch (listState) {
+              ReceiptListLoading() => const Center(
+                child: CircularProgressIndicator(),
               ),
-            ),
-            ReceiptListLoaded(:final items) => RefreshIndicator(
-              onRefresh: _refresh,
-              child: ListView.separated(
-                // T3b：列表短于视口（演示数据常态）也能拉动触发下拉刷新。
-                physics: const AlwaysScrollableScrollPhysics(),
-                itemCount: items.length,
-                itemBuilder: (context, i) {
-                  final r = items[i];
-                  return ListTile(
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute<void>(
-                        builder: (_) => ReceiptDetailPage(receiptId: r.id),
+              ReceiptListEmpty() => const Center(child: Text('暂无接样单')),
+              ReceiptListError(:final message) => Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(message),
+                    const SizedBox(height: 8),
+                    FilledButton(
+                      onPressed: _applyFilters,
+                      child: const Text('重试'),
+                    ),
+                  ],
+                ),
+              ),
+              ReceiptListLoaded(:final items) => RefreshIndicator(
+                onRefresh: _refresh,
+                child: ListView.separated(
+                  // T3b：列表短于视口（演示数据常态）也能拉动触发下拉刷新。
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  itemCount: items.length,
+                  itemBuilder: (context, i) {
+                    final r = items[i];
+                    return ListTile(
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute<void>(
+                          builder: (_) => ReceiptDetailPage(receiptId: r.id),
+                        ),
                       ),
-                    ),
-                    title: Text(
-                      '${r.commissionCode}（${r.projectName ?? '未填项目名'}）',
-                    ),
-                    subtitle: Text(
-                      '${r.categoryCode} · ${flowStatusLabel(r.flowStatus)} · ${r.receivedBy}',
-                    ),
-                    trailing: Text(r.commissionDate),
-                  );
-                },
-                separatorBuilder: (_, _) => const Divider(height: 1),
+                      title: Text(
+                        '${r.commissionCode}（${r.projectName ?? '未填项目名'}）',
+                      ),
+                      subtitle: Text(
+                        '${r.categoryCode} · ${flowStatusLabel(r.flowStatus)} · ${r.receivedBy}',
+                      ),
+                      trailing: Text(r.commissionDate),
+                    );
+                  },
+                  separatorBuilder: (_, _) => const Divider(height: 1),
+                ),
               ),
-            ),
-          }),
+            },
+          ),
         ],
       ),
     );

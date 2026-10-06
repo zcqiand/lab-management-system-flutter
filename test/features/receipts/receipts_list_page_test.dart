@@ -65,46 +65,47 @@ void main() {
     expect(find.text('重试'), findsOneWidget);
   });
 
-  testWidgets('三过滤 UI 上链：keyword/contractId 回车 + flowStatus 下拉（// fn: M03.F01.I01）', (
-    tester,
-  ) async {
-    // fn: M03.F01.I01
-    // I-1 回归钉（spec §3「三过滤」在 UI 层的履约）：每次提交全量带当前过滤值，
-    // query 捕获断言走 wire 形状（T5 配方）。修复前过滤区不存在 → enterText
-    // 找不到控件必红。
-    final (dio, adapter) = receiptRig();
-    final queries = <Map<String, String>>[];
-    adapter.onGet('/api/receipts', (server) {
-      server.reply(200, (RequestOptions options) {
-        queries.add(options.uri.queryParameters);
-        return receiptListJson([receiptJson(id: 'r-1')]);
+  testWidgets(
+    '三过滤 UI 上链：keyword/contractId 回车 + flowStatus 下拉（// fn: M03.F01.I01）',
+    (tester) async {
+      // fn: M03.F01.I01
+      // I-1 回归钉（spec §3「三过滤」在 UI 层的履约）：每次提交全量带当前过滤值，
+      // query 捕获断言走 wire 形状（T5 配方）。修复前过滤区不存在 → enterText
+      // 找不到控件必红。
+      final (dio, adapter) = receiptRig();
+      final queries = <Map<String, String>>[];
+      adapter.onGet('/api/receipts', (server) {
+        server.reply(200, (RequestOptions options) {
+          queries.add(options.uri.queryParameters);
+          return receiptListJson([receiptJson(id: 'r-1')]);
+        });
       });
-    });
-    await pumpList(tester, dio);
-    expect(queries.single.isEmpty, isTrue); // 初载无过滤参数
+      await pumpList(tester, dio);
+      expect(queries.single.isEmpty, isTrue); // 初载无过滤参数
 
-    await tester.enterText(find.widgetWithText(TextField, '关键词'), '示例');
-    await tester.testTextInput.receiveAction(TextInputAction.done);
-    await tester.pumpAndSettle();
-    expect(queries.length, 2);
-    expect(queries.last['keyword'], '示例');
+      await tester.enterText(find.widgetWithText(TextField, '关键词'), '示例');
+      await tester.testTextInput.receiveAction(TextInputAction.done);
+      await tester.pumpAndSettle();
+      expect(queries.length, 2);
+      expect(queries.last['keyword'], '示例');
 
-    await tester.enterText(find.widgetWithText(TextField, '合同 ID'), 'c-9');
-    await tester.testTextInput.receiveAction(TextInputAction.done);
-    await tester.pumpAndSettle();
-    expect(queries.length, 3);
-    expect(queries.last['contractId'], 'c-9');
-    expect(queries.last['keyword'], '示例'); // 已提交过滤器保持
+      await tester.enterText(find.widgetWithText(TextField, '合同 ID'), 'c-9');
+      await tester.testTextInput.receiveAction(TextInputAction.done);
+      await tester.pumpAndSettle();
+      expect(queries.length, 3);
+      expect(queries.last['contractId'], 'c-9');
+      expect(queries.last['keyword'], '示例'); // 已提交过滤器保持
 
-    await tester.tap(find.byType(DropdownButtonFormField<FlowStatus?>));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('接收登记').last); // 菜单项（.last 跳过选中文本）
-    await tester.pumpAndSettle();
-    expect(queries.length, 4);
-    expect(queries.last['flowStatus'], 'receiving');
-    expect(queries.last['keyword'], '示例');
-    expect(queries.last['contractId'], 'c-9');
-  });
+      await tester.tap(find.byType(DropdownButtonFormField<FlowStatus?>));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('接收登记').last); // 菜单项（.last 跳过选中文本）
+      await tester.pumpAndSettle();
+      expect(queries.length, 4);
+      expect(queries.last['flowStatus'], 'receiving');
+      expect(queries.last['keyword'], '示例');
+      expect(queries.last['contractId'], 'c-9');
+    },
+  );
 
   testWidgets('过滤后下拉刷新保参 + 静默不闪 Loading（// fn: M03.F01.I01）', (tester) async {
     // fn: M03.F01.I01

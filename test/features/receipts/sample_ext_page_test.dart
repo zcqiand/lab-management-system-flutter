@@ -116,15 +116,19 @@ void main() {
     expect(find.text('必填'), findsOneWidget);
   });
 
-  testWidgets('保存失败回 Ready 不丢输入 + SnackBar 文案（// fn: M03.F01.I07）', (tester) async {
+  testWidgets('保存失败回 Ready 不丢输入 + SnackBar 文案（// fn: M03.F01.I07）', (
+    tester,
+  ) async {
     // fn: M03.F01.I07
     // T8-2/T8-3 回归钉：瞬时网络/422 一次不能丢用户录入——save 的
     // DioException 回 Ready（errors/控件值保留）+ SnackBar「保存失败，请
     // 重试」，与表单页姿态对齐；修复前全屏 Error 顶掉表单必红。
     adapter.onPut('/api/samples/s-1/ext', (server) {
       // 后注册者胜：盖掉 setUp 的成功回包。
-      server.reply(500, {'code': 'INTERNAL', 'message': 'boom'},
-          delay: const Duration(milliseconds: 200));
+      server.reply(500, {
+        'code': 'INTERNAL',
+        'message': 'boom',
+      }, delay: const Duration(milliseconds: 200));
     });
     await pumpExt(tester);
     await tester.pumpAndSettle();
@@ -133,7 +137,10 @@ void main() {
     await tester.pump(); // 保存发出
     await tester.pump(const Duration(milliseconds: 300)); // 失败回包落地
     expect(find.text('保存失败，请重试'), findsOneWidget); // SnackBar（save 文案）
-    expect(find.widgetWithText(TextFormField, '坍落度'), findsOneWidget); // 未翻全屏 Error
+    expect(
+      find.widgetWithText(TextFormField, '坍落度'),
+      findsOneWidget,
+    ); // 未翻全屏 Error
     expect(find.text('188'), findsOneWidget); // 用户输入还在
     await tester.pumpAndSettle(); // SnackBar 动画/dismiss 计时走完
   });
