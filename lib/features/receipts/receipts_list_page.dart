@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lab_management_system_flutter/core/auth/auth_controller.dart';
 
 import 'flow_status_label.dart';
+import 'receipt_detail_page.dart';
 import 'receipt_list_controller.dart';
 
 /// 接样单列表（M03.F01.I01）。
@@ -66,6 +67,12 @@ class _ReceiptsListPageState extends ConsumerState<ReceiptsListPage> {
             itemBuilder: (context, i) {
               final r = items[i];
               return ListTile(
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute<void>(
+                    builder: (_) => ReceiptDetailPage(receiptId: r.id),
+                  ),
+                ),
                 title: Text('${r.commissionCode}（${r.projectName ?? '未填项目名'}）'),
                 subtitle: Text(
                   '${r.categoryCode} · ${flowStatusLabel(r.flowStatus)} · ${r.receivedBy}',

@@ -17,3 +17,12 @@ String flowStatusLabel(FlowStatus status) {
     _ => throw ArgumentError('未知 FlowStatus: ${status.name}'),
   };
 }
+
+/// FlowAction → 中文标签（流程历史时间线用，flowStatusLabel 同款纪律）。
+String flowActionLabel(FlowAction a) => switch (a) {
+  FlowAction.submit => '提交',
+  FlowAction.return_ => '退回',
+  FlowAction.withdraw => '撤回',
+  // EnumClass 非 sealed：未知值 fail-fast（禁静默回退）。
+  _ => throw ArgumentError('未知 FlowAction: ${a.name}'),
+};
