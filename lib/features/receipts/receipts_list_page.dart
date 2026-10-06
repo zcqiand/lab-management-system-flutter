@@ -10,6 +10,7 @@ import 'flow_status_label.dart';
 import 'receipt_detail_page.dart';
 import 'receipt_form_page.dart';
 import 'receipt_list_controller.dart';
+import 'task_queue_page.dart';
 
 /// 接样单列表（M03.F01.I01）。
 class ReceiptsListPage extends ConsumerStatefulWidget {
@@ -82,6 +83,15 @@ class _ReceiptsListPageState extends ConsumerState<ReceiptsListPage> {
       appBar: AppBar(
         title: const Text('接样单'),
         actions: [
+          // M03.F02.I01 队列入口（流程线第二环节）。
+          IconButton(
+            tooltip: '任务分配',
+            icon: const Icon(Icons.assignment_ind_outlined),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute<void>(builder: (_) => const TaskQueuePage()),
+            ),
+          ),
           IconButton(
             tooltip: '登出',
             icon: const Icon(Icons.logout),
