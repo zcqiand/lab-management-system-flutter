@@ -1,13 +1,17 @@
 {
   "schema": 1,
   "project": "lab-management-system-flutter",
-  "current_task": "项目已初始化，等待第一个需求",
-  "done": ["脚手架生成，门禁全绿"],
-  "next": "跑 /req <需求原话> 落第一份需求文档，同时把 docs/functions/function-tree.md 填成真实功能清单",
+  "current_task": "REQ-2026-002 M03.F01 接收登记全量切片已 GA 已上线（tag v0.3.0-20261006）——切片收口完成",
+  "done": [
+    "Phase 0b 仓复刻（镜像登记 M00/M01/M03 + 全门绿）",
+    "REQ-2026-001 原生登录切片 GA（tag v0.2.0-20261006）",
+    "REQ-2026-002 M03.F01 接收登记全量切片 GA（tag v0.3.0-20261006；人工验收 2026-10-06 通过，11 行已上线）"
+  ],
+  "next": "无在办——下一需求域待定（镜像树 M03.F02 任务分配为候选，REQ-2026-004）",
   "open_questions": [],
   "dont": [
     "不要改 .harness/stack.json 让门变松",
     "不要给 skip 的测试挂功能 ID"
   ],
-  "last_gate_passed_at": null
+  "last_gate_passed_at": "2026-10-06（gate exit 0：73 tests / analyze 0 / trace 恰 12）"
 }
