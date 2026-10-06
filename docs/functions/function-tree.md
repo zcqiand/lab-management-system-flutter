@@ -43,14 +43,14 @@
 
 | 功能 ID | 功能名称 | 说明 | 状态 |
 |---|---|---|---|
-| M03.F01 | 接样管理（CRUD + 三态过滤） | 接样单列表/新建/编辑/删除 + act 提交/退回/撤回；REQ-2026-001 | 开发中 |
-| M03.F01.I01 | 接样单列表（三态过滤） | 页面：`GET /receipts` + filter 三态（全部/未提交/已提交） | 开发中 |
-| M03.F01.I02 | 新建/编辑接样单 | 按钮：POST/PUT `/receipts`（PATCH 语义） | 开发中 |
-| M03.F01.I03 | 删除接样单 | 按钮：DELETE `/receipts/{id}` | 开发中 |
-| M03.F01.I04 | 提交接样单（receiving → task_assignment） | 按钮：act `action=SUBMIT` | 开发中 |
-| M03.F01.I06 | 接样单流程历史 | 接口：`GET /receipts/{id}/history` 渲染时间线 | 开发中 |
-| M03.F01.I07 | 接样单 ext 字段补录 | 接口：`GET /api/report-names`（取类别 extFields 定义）+ `PUT /api/samples/{id}/ext`（合并提交）；预览前补录门（家族 SampleExtFieldsModal 同款）；REQ-2026-008 | 开发中 |
-| M03.F01.I08 | 接样-提交（act 三动作） | 接口：`POST /receipts/receiving/act`，body.action={SUBMIT、RETURN、WITHDRAW} | 开发中 |
+| M03.F01 | 接样管理（CRUD + 三态过滤） | 接样单列表/新建/编辑/删除 + act 提交/退回/撤回；REQ-2026-001 | 已上线 |
+| M03.F01.I01 | 接样单列表（三态过滤） | 页面：`GET /receipts` + filter 三态（全部/未提交/已提交） | 已上线 |
+| M03.F01.I02 | 新建/编辑接样单 | 按钮：POST/PUT `/receipts`（PATCH 语义） | 已上线 |
+| M03.F01.I03 | 删除接样单 | 按钮：DELETE `/receipts/{id}` | 已上线 |
+| M03.F01.I04 | 提交接样单（receiving → task_assignment） | 按钮：act `action=SUBMIT` | 已上线 |
+| M03.F01.I06 | 接样单流程历史 | 接口：`GET /receipts/{id}/history` 渲染时间线 | 已上线 |
+| M03.F01.I07 | 接样单 ext 字段补录 | 接口：`GET /api/report-names`（取类别 extFields 定义）+ `PUT /api/samples/{id}/ext`（合并提交）；预览前补录门（家族 SampleExtFieldsModal 同款）；REQ-2026-008 | 已上线 |
+| M03.F01.I08 | 接样-提交（act 三动作） | 接口：`POST /receipts/receiving/act`，body.action={SUBMIT、RETURN、WITHDRAW} | 已上线 |
 | M03.F02 | 任务分配（安排检测人员/计划日期） | 分配队列 + 安排/取消 + act 三动作 | 规划 |
 | M03.F02.I01 | 任务分配队列 | 页面：`GET /receipts`（flowStatus=task_assignment）+ keyword；REQ-2026-004 | 规划 |
 | M03.F02.I02 | 安排/取消检测人员与计划日期 | 按钮：`PUT /receipts/{id}/assign-task`，手填姓名+日期（assigneeId 不传）；REQ-2026-004 | 规划 |
@@ -76,9 +76,9 @@
 | M03.F08.I01 | 归档队列（archived 阶段） | 页面：`GET /receipts`（flowStatus=archived）+ keyword，ReportPhaseView 复用；REQ-2026-006 | 规划 |
 | M03.F08.I02 | 归档完成 | 按钮：选中行 submit（归档完成） | 规划 |
 | M03.F08.I05 | 报告归档-提交（act 三动作） | 接口：`POST /receipts/archived/act`，body.action={submit、return、withdraw}；operator=会话身份（I06 退回/I07 撤回家族已废弃语义并入，号不回收） | 规划 |
-| M03.F09 | 接样单详情（接样+样品+检测数据+预览） | 详情页 + 流程历史时间线 + 报告预览；REQ-2026-007 | 开发中 |
-| M03.F09.I01 | 接样单详情页（接样信息全字段） | 接口：`GET /receipts/{id}` 渲染接样信息全字段表（委托/工程/四单位/见证/送检/取样/类别/流程状态/检测结果/负责人/计划日期/报告编号/报告日期）；REQ-2026-007 | 开发中 |
-| M03.F09.I02 | 流程历史时间线（按 at 倒序） | 接口：`GET /receipts/{id}/history`，与 M03.F01.I06 同一实现双挂；REQ-2026-007 | 开发中 |
+| M03.F09 | 接样单详情（接样+样品+检测数据+预览） | 详情页 + 流程历史时间线 + 报告预览；REQ-2026-007 | 已上线 |
+| M03.F09.I01 | 接样单详情页（接样信息全字段） | 接口：`GET /receipts/{id}` 渲染接样信息全字段表（委托/工程/四单位/见证/送检/取样/类别/流程状态/检测结果/负责人/计划日期/报告编号/报告日期）；REQ-2026-007 | 已上线 |
+| M03.F09.I02 | 流程历史时间线（按 at 倒序） | 接口：`GET /receipts/{id}/history`，与 M03.F01.I06 同一实现双挂；REQ-2026-007 | 已上线 |
 | M03.F09.I03 | 报告预览（数据面摘要） | 接口：`GET /api/samples?receiptId` + `GET /api/test-records?sampleId` 逐样品归集，SwiftUI 报告式摘要（docx 模板/打印套打为家族 Web 专属，非范围）；REQ-2026-007 | 规划 |
 
 ---
