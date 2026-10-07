@@ -60,22 +60,22 @@
 | M03.F03.I02 | 保存检测记录 | 按钮：POST/PUT `/test-records`（create-vs-update 按同键记录），verdict 随请求体；REQ-2026-005 | 开发中 |
 | M03.F03.I03 | 人工改判 verdict | 按钮：录入 sheet verdict 选择器改值随保存请求体提交（不走专用 setVerdict，家族同款）；REQ-2026-005 | 开发中 |
 | M03.F03.I12 | 数据录入-提交（act 三动作） | 接口：`POST /receipts/data-entry/act`，body.action={submit、return、withdraw}；operator=会话身份 | 开发中 |
-| M03.F05 | 报告审核流程 | 审核队列 + 审核通过/驳回 + act 三动作；REQ-2026-006 | 规划 |
-| M03.F05.I01 | 审核队列（review 阶段） | 页面：`GET /receipts`（flowStatus=review）+ keyword，ReportPhaseView 复用；REQ-2026-006 | 规划 |
-| M03.F05.I02 | 审核通过/驳回 | 按钮：选中行 submit（审核通过）/return（退回） | 规划 |
-| M03.F05.I07 | 报告审核-提交（act 三动作） | 接口：`POST /receipts/review/act`，body.action={submit、return、withdraw}；operator=会话身份（I08 退回/I09 撤回家族已废弃语义并入，号不回收） | 规划 |
-| M03.F06 | 报告批准流程 | 批准队列 + 批准/驳回 + act 三动作；REQ-2026-006 | 规划 |
-| M03.F06.I01 | 批准队列（approval 阶段） | 页面：`GET /receipts`（flowStatus=approval）+ keyword，ReportPhaseView 复用；REQ-2026-006 | 规划 |
-| M03.F06.I02 | 批准/驳回 | 按钮：选中行 submit（批准）/return（驳回） | 规划 |
-| M03.F06.I05 | 报告批准-提交（act 三动作） | 接口：`POST /receipts/approve/act`，body.action={submit、return、withdraw}；operator=会话身份（I06 退回/I07 撤回家族已废弃语义并入，号不回收） | 规划 |
-| M03.F07 | 报告发放流程 | 发放队列 + 发放（生成报告编号）+ act 三动作；REQ-2026-006 | 规划 |
-| M03.F07.I01 | 发放队列（issuance 阶段） | 页面：`GET /receipts`（flowStatus=issuance）+ keyword，ReportPhaseView 复用；REQ-2026-006 | 规划 |
-| M03.F07.I02 | 发放（生成报告编号） | 按钮：本阶段 act submit；编号后端 act 语义生成，行上呈现 reportCode | 规划 |
-| M03.F07.I05 | 报告发放-提交（act 三动作） | 接口：`POST /receipts/issuance/act`，body.action={submit、return、withdraw}；operator=会话身份（I06 退回/I07 撤回家族已废弃语义并入，号不回收） | 规划 |
-| M03.F08 | 报告归档流程 | 归档队列 + 归档完成 + act 三动作；REQ-2026-006 | 规划 |
-| M03.F08.I01 | 归档队列（archived 阶段） | 页面：`GET /receipts`（flowStatus=archived）+ keyword，ReportPhaseView 复用；REQ-2026-006 | 规划 |
-| M03.F08.I02 | 归档完成 | 按钮：选中行 submit（归档完成） | 规划 |
-| M03.F08.I05 | 报告归档-提交（act 三动作） | 接口：`POST /receipts/archived/act`，body.action={submit、return、withdraw}；operator=会话身份（I06 退回/I07 撤回家族已废弃语义并入，号不回收） | 规划 |
+| M03.F05 | 报告审核流程 | 审核队列 + 审核通过/驳回 + act 三动作；REQ-2026-006 | 开发中 |
+| M03.F05.I01 | 审核队列（review 阶段） | 页面：`GET /receipts`（flowStatus=review）+ keyword，ReportPhaseView 复用；REQ-2026-006 | 开发中 |
+| M03.F05.I02 | 审核通过/驳回 | 按钮：选中行 submit（审核通过）/return（退回） | 开发中 |
+| M03.F05.I07 | 报告审核-提交（act 三动作） | 接口：`POST /receipts/review/act`，body.action={submit、return、withdraw}；operator=会话身份（I08 退回/I09 撤回家族已废弃语义并入，号不回收） | 开发中 |
+| M03.F06 | 报告批准流程 | 批准队列 + 批准/驳回 + act 三动作；REQ-2026-006 | 开发中 |
+| M03.F06.I01 | 批准队列（approval 阶段） | 页面：`GET /receipts`（flowStatus=approval）+ keyword，ReportPhaseView 复用；REQ-2026-006 | 开发中 |
+| M03.F06.I02 | 批准/驳回 | 按钮：选中行 submit（批准）/return（驳回） | 开发中 |
+| M03.F06.I05 | 报告批准-提交（act 三动作） | 接口：`POST /receipts/approve/act`，body.action={submit、return、withdraw}；operator=会话身份（I06 退回/I07 撤回家族已废弃语义并入，号不回收） | 开发中 |
+| M03.F07 | 报告发放流程 | 发放队列 + 发放（生成报告编号）+ act 三动作；REQ-2026-006 | 开发中 |
+| M03.F07.I01 | 发放队列（issuance 阶段） | 页面：`GET /receipts`（flowStatus=issuance）+ keyword，ReportPhaseView 复用；REQ-2026-006 | 开发中 |
+| M03.F07.I02 | 发放（生成报告编号） | 按钮：本阶段 act submit；编号后端 act 语义生成，行上呈现 reportCode | 开发中 |
+| M03.F07.I05 | 报告发放-提交（act 三动作） | 接口：`POST /receipts/issuance/act`，body.action={submit、return、withdraw}；operator=会话身份（I06 退回/I07 撤回家族已废弃语义并入，号不回收） | 开发中 |
+| M03.F08 | 报告归档流程 | 归档队列 + 归档完成 + act 三动作；REQ-2026-006 | 开发中 |
+| M03.F08.I01 | 归档队列（archived 阶段） | 页面：`GET /receipts`（flowStatus=archived）+ keyword，ReportPhaseView 复用；REQ-2026-006 | 开发中 |
+| M03.F08.I02 | 归档完成 | 按钮：选中行 submit（归档完成） | 开发中 |
+| M03.F08.I05 | 报告归档-提交（act 三动作） | 接口：`POST /receipts/archived/act`，body.action={submit、return、withdraw}；operator=会话身份（I06 退回/I07 撤回家族已废弃语义并入，号不回收） | 开发中 |
 | M03.F09 | 接样单详情（接样+样品+检测数据+预览） | 详情页 + 流程历史时间线 + 报告预览；REQ-2026-007 | 已上线 |
 | M03.F09.I01 | 接样单详情页（接样信息全字段） | 接口：`GET /receipts/{id}` 渲染接样信息全字段表（委托/工程/四单位/见证/送检/取样/类别/流程状态/检测结果/负责人/计划日期/报告编号/报告日期）；REQ-2026-007 | 已上线 |
 | M03.F09.I02 | 流程历史时间线（按 at 倒序） | 接口：`GET /receipts/{id}/history`，与 M03.F01.I06 同一实现双挂；REQ-2026-007 | 已上线 |
