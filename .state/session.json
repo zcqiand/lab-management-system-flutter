@@ -1,20 +1,21 @@
 {
-  "schema": 1,
-  "project": "lab-management-system-flutter",
-  "current_task": "REQ-2026-002 M03.F01 接收登记全量切片已 GA 已上线（tag v0.3.0-20261006）——切片收口完成",
-  "done": [
-    "Phase 0b 仓复刻（镜像登记 M00/M01/M03 + 全门绿）",
-    "REQ-2026-001 原生登录切片 GA（tag v0.2.0-20261006）",
-    "REQ-2026-002 M03.F01 接收登记全量切片 GA（tag v0.3.0-20261006；人工验收 2026-10-06 通过，11 行已上线）"
-  ],
-  "next": "无在办——下一需求域待定（镜像树 M03.F02 任务分配为候选，REQ-2026-004）",
-  "open_questions": [],
-  "dont": [
-    "不要改 .harness/stack.json 让门变松",
-    "不要给 skip 的测试挂功能 ID"
-  ],
-  "last_gate_passed_at": "2026-10-06（gate exit 0：73 tests / analyze 0 / trace 恰 12）",
-  "last_slice": "REQ-2026-005/006 GA 已收口：人工验收通过（2026-10-07），21 行 →已上线（f4d1d1c 已推），ACCEPTANCE-2026-10-07-m03f03-f08 入档",
-  "pending": "后续候选：M00.F01 会话 / M00.F02 登录选租户+切换器 / M01.F05.I03 SSO / M03.F09.I03 报告预览；模块行 M00/M01/M03 仍规划态（规划→已上线不在免批类，需人裁）",
-  "updated": "2026-10-07"
+ "schema": 1,
+ "project": "lab-management-system-flutter",
+ "current_task": "REQ-2026-011 M00 租户管理切片（F01 会话渲染 + F02.I01 切换器）T1-T3 完成——bc4f0d0 已推，待人工验收",
+ "done": [
+  "Phase 0b 仓复刻（镜像登记 M00/M01/M03 + 全门绿）",
+  "REQ-2026-001 原生登录切片 GA（tag v0.2.0-20261006）",
+  "REQ-2026-002 M03.F01 接收登记全量切片 GA（tag v0.3.0-20261006；人工验收 2026-10-06 通过，11 行已上线）",
+  "REQ-2026-011 M00 租户管理切片（3 测全绿：F01+F02.I01 双锚；trace 51/33 inert 0；gate EXIT=0）"
+ ],
+ "next": "候选切片 B：M01.F05.I03 SSO 授权码流（flutter 形态=web redirect，可复用 saas SsoHandoff 配方）；切片 C：M03.F09.I03 报告预览数据面摘要",
+ "open_questions": [],
+ "dont": [
+  "不要改 .harness/stack.json 让门变松",
+  "不要给 skip 的测试挂功能 ID"
+ ],
+ "last_gate_passed_at": "2026-10-07（gate exit 0：136 tests / analyze 0 / trace 51 测 33 ID inert 0）",
+ "last_slice": "REQ-2026-011 M00（bc4f0d0）",
+ "pending": "后续候选：M00.F01 会话 / M00.F02 登录选租户+切换器 / M01.F05.I03 SSO / M03.F09.I03 报告预览；模块行 M00/M01/M03 仍规划态（规划→已上线不在免批类，需人裁）",
+ "updated": "2026-10-07"
 }
