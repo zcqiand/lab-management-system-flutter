@@ -79,7 +79,7 @@
 | M03.F09 | 接样单详情（接样+样品+检测数据+预览） | 详情页 + 流程历史时间线 + 报告预览；REQ-2026-007 | 已上线 |
 | M03.F09.I01 | 接样单详情页（接样信息全字段） | 接口：`GET /receipts/{id}` 渲染接样信息全字段表（委托/工程/四单位/见证/送检/取样/类别/流程状态/检测结果/负责人/计划日期/报告编号/报告日期）；REQ-2026-007 | 已上线 |
 | M03.F09.I02 | 流程历史时间线（按 at 倒序） | 接口：`GET /receipts/{id}/history`，与 M03.F01.I06 同一实现双挂；REQ-2026-007 | 已上线 |
-| M03.F09.I03 | 报告预览（数据面摘要） | 接口：`GET /api/samples?receiptId` + `GET /api/test-records?sampleId` 逐样品归集，SwiftUI 报告式摘要（docx 模板/打印套打为家族 Web 专属，非范围）；REQ-2026-007 | 规划 |
+| M03.F09.I03 | 报告预览（数据面摘要） | 接口：`GET /api/samples?receiptId` + `GET /api/test-records?sampleId` 逐样品归集，SwiftUI 报告式摘要（docx 模板/打印套打为家族 Web 专属，非范围）；REQ-2026-007 | 开发中 |
 
 ---
 
