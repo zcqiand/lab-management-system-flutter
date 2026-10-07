@@ -18,9 +18,12 @@ import '../../support/receipt_fixtures.dart';
 
 void main() {
   /// 目录三件默认 mock：样品 1 + 参数 1 + 该样品既有记录集（默认空）。
+  /// [createReply] 非空时折进同路径 handler 按 method 分流——UrlRequestMatcher
+  /// 默认不比 method（matchMethod:false），同路径 onPost 注册会顶掉 GET 处理器。
   void mockCatalog(
     DioAdapter adapter, {
     List<Map<String, dynamic>> records = const [],
+    Map<String, dynamic> Function(RequestOptions options)? createReply,
   }) {
     adapter.onGet('/api/samples', (server) {
       server.reply(200, samplesListJson([sampleJson(id: 's-1')]));
@@ -29,7 +32,12 @@ void main() {
       server.reply(200, parametersListJson([inspectionParameterJson()]));
     });
     adapter.onGet('/api/test-records', (server) {
-      server.reply(200, testRecordsListJson(records));
+      server.reply(200, (RequestOptions options) {
+        if (createReply != null && options.method == 'POST') {
+          return createReply(options);
+        }
+        return testRecordsListJson(records);
+      });
     });
   }
 
@@ -56,6 +64,9 @@ void main() {
       find.widgetWithText(TextField, '技术要求'),
       '≥42.5MPa',
     );
+    // 保存键居表单尾部：滚进视口再点。
+    await tester.ensureVisible(find.text('保存'));
+    await tester.pumpAndSettle();
     await tester.tap(find.widgetWithText(FilledButton, '保存'));
     await tester.pumpAndSettle();
   }
@@ -101,16 +112,16 @@ void main() {
   testWidgets('新键保存：POST body 字段齐 + standardCode 空串归一不传（AC-3）', (tester) async {
     CreateTestRecordRequest? captured;
     final (dio, adapter) = receiptRig();
-    mockCatalog(adapter);
-    adapter.onPost('/api/test-records', (server) {
-      server.reply(200, (RequestOptions options) {
+    mockCatalog(
+      adapter,
+      createReply: (options) {
         captured = standardSerializers.deserializeWith(
           CreateTestRecordRequest.serializer,
           options.data as Map<String, dynamic>,
         )!;
         return savedTestRecordJson();
-      });
-    });
+      },
+    );
     await pumpSheet(tester, dio);
     await fillAndSave(tester);
     expect(captured, isNotNull);
@@ -173,14 +184,18 @@ void main() {
   testWidgets('必填缺失：文案上屏且不发请求（AC-5 fail-fast）', (tester) async {
     var writeCalls = 0;
     final (dio, adapter) = receiptRig();
+    // onPost 注册延后到首载之后：同路径先注册会顶掉 GET（见 mockCatalog 注释）。
     mockCatalog(adapter);
-    adapter.onPost('/api/test-records', (server) {
-      server.reply(200, (RequestOptions options) {
+    await pumpSheet(tester, dio);
+    adapter.onPost(
+      '/api/test-records',
+      (server) => server.reply(200, (RequestOptions options) {
         writeCalls++;
         return savedTestRecordJson();
-      });
-    });
-    await pumpSheet(tester, dio);
+      }),
+    );
+    await tester.ensureVisible(find.text('保存'));
+    await tester.pumpAndSettle();
     await tester.tap(find.widgetWithText(FilledButton, '保存'));
     await tester.pumpAndSettle();
     expect(find.text('请完整填写检测结果与技术要求'), findsOneWidget);
@@ -190,12 +205,14 @@ void main() {
 
   testWidgets('保存失败（500）：留窗保输入 + 错误文案上屏', (tester) async {
     final (dio, adapter) = receiptRig();
+    // onPost 注册延后到首载之后：同路径先注册会顶掉 GET（见 mockCatalog 注释）；
+    // 500 与 200 的 status 无法折进单 reply，只能时序错开。
     mockCatalog(adapter);
+    await pumpSheet(tester, dio);
     adapter.onPost(
       '/api/test-records',
       (server) => server.reply(500, <String, dynamic>{'message': 'boom'}),
     );
-    await pumpSheet(tester, dio);
     await fillAndSave(tester);
     expect(find.text('保存失败，请重试'), findsOneWidget);
     expect(find.byType(DataEntrySheet), findsOneWidget);
@@ -223,10 +240,6 @@ void main() {
       });
     });
     mockCatalog(adapter);
-    adapter.onPost(
-      '/api/test-records',
-      (server) => server.reply(200, savedTestRecordJson()),
-    );
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
@@ -241,6 +254,11 @@ void main() {
     expect(queueCalls, 1);
     await tester.tap(find.textContaining('WT-2026-001'));
     await tester.pumpAndSettle();
+    // onPost 注册延后到 sheet 首载之后：同路径先注册会顶掉 GET（mockCatalog 注释）。
+    adapter.onPost(
+      '/api/test-records',
+      (server) => server.reply(200, savedTestRecordJson()),
+    );
     await fillAndSave(tester);
     // 收窗回队列：SnackBar + silent 回刷（第二轮流向 data_entry query）
     expect(find.byType(DataEntrySheet), findsNothing);

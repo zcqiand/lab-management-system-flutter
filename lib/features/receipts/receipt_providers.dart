@@ -17,3 +17,11 @@ final samplesApiProvider = Provider<SamplesApi>(
 final reportNamesApiProvider = Provider<ReportNamesApi>(
   (ref) => ReportNamesApi(ref.watch(dioProvider), standardSerializers),
 );
+
+final testRecordsApiProvider = Provider<TestRecordsApi>(
+  (ref) => TestRecordsApi(ref.watch(dioProvider), standardSerializers),
+);
+
+final inspectionDictionaryApiProvider = Provider<InspectionDictionaryApi>(
+  (ref) => InspectionDictionaryApi(ref.watch(dioProvider), standardSerializers),
+);
