@@ -15,11 +15,7 @@ Map<String, dynamic> receiptInDataEntryJson({
   String id = 'r-1',
   Map<String, Object?> overrides = const {},
 }) {
-  return receiptJson(
-    id: id,
-    flowStatus: 'data_entry',
-    overrides: overrides,
-  );
+  return receiptJson(id: id, flowStatus: 'data_entry', overrides: overrides);
 }
 
 /// 检测参数字典行（InspectionParameter）。必填 9：code/name/rawName/

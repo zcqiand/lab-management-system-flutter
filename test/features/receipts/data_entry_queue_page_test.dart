@@ -39,10 +39,7 @@ void main() {
     // fn: M03.F03.I01
     final (dio, adapter) = receiptRig();
     adapter.onGet('/api/receipts', (server) {
-      server.reply(
-        200,
-        receiptListJson([receiptInDataEntryJson()]),
-      );
+      server.reply(200, receiptListJson([receiptInDataEntryJson()]));
     });
     await pumpQueue(tester, dio);
     expect(find.textContaining('WT-2026-001'), findsOneWidget);
@@ -78,14 +75,14 @@ void main() {
       server.reply(200, (RequestOptions options) {
         final filtered = options.uri.queryParameters['keyword'] == '示例';
         return receiptListJson([
-          receiptInDataEntryJson(
-            id: 'r-1',
-            overrides: {'projectName': '示例大厦'},
-          ),
+          receiptInDataEntryJson(id: 'r-1', overrides: {'projectName': '示例大厦'}),
           if (!filtered)
             receiptInDataEntryJson(
               id: 'r-2',
-              overrides: {'projectName': '无关工程', 'commissionCode': 'WT-2026-002'},
+              overrides: {
+                'projectName': '无关工程',
+                'commissionCode': 'WT-2026-002',
+              },
             ),
         ]);
       });
@@ -121,10 +118,7 @@ void main() {
   testWidgets('行点击 → 录入 sheet 入栈，目录三件上屏（I01 sheet 入口接线）', (tester) async {
     final (dio, adapter) = receiptRig();
     adapter.onGet('/api/receipts', (server) {
-      server.reply(
-        200,
-        receiptListJson([receiptInDataEntryJson()]),
-      );
+      server.reply(200, receiptListJson([receiptInDataEntryJson()]));
     });
     adapter.onGet('/api/samples', (server) {
       server.reply(200, samplesListJson([sampleJson(id: 's-1')]));

@@ -141,7 +141,9 @@ void main() {
       isNull,
     );
     expect(
-      tester.widget<TextButton>(find.widgetWithText(TextButton, '撤回')).onPressed,
+      tester
+          .widget<TextButton>(find.widgetWithText(TextButton, '撤回'))
+          .onPressed,
       isNull,
     );
     expect(actCalls, 0);
@@ -252,9 +254,6 @@ void main() {
     expect(find.text('当前阶段不可退回'), findsOneWidget);
     // 不崩栈：列表仍在、选择保留（可重试）
     expect(find.byType(Checkbox), findsOneWidget);
-    expect(
-      tester.widget<Checkbox>(find.byType(Checkbox)).value,
-      isTrue,
-    );
+    expect(tester.widget<Checkbox>(find.byType(Checkbox)).value, isTrue);
   });
 }

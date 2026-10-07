@@ -55,15 +55,12 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  Future<void> fillAndSave(WidgetTester tester, {String result = '45.1'}) async {
-    await tester.enterText(
-      find.widgetWithText(TextField, '检测结果'),
-      result,
-    );
-    await tester.enterText(
-      find.widgetWithText(TextField, '技术要求'),
-      '≥42.5MPa',
-    );
+  Future<void> fillAndSave(
+    WidgetTester tester, {
+    String result = '45.1',
+  }) async {
+    await tester.enterText(find.widgetWithText(TextField, '检测结果'), result);
+    await tester.enterText(find.widgetWithText(TextField, '技术要求'), '≥42.5MPa');
     // 保存键居表单尾部：滚进视口再点。
     await tester.ensureVisible(find.text('保存'));
     await tester.pumpAndSettle();
@@ -89,21 +86,24 @@ void main() {
     await pumpSheet(tester, dio);
     expect(find.text('已有记录，保存将更新'), findsOneWidget);
     expect(
-      tester.widget<TextField>(
-        find.widgetWithText(TextField, '检测结果'),
-      ).controller!.text,
+      tester
+          .widget<TextField>(find.widgetWithText(TextField, '检测结果'))
+          .controller!
+          .text,
       '44.2',
     );
     expect(
-      tester.widget<TextField>(
-        find.widgetWithText(TextField, '技术要求'),
-      ).controller!.text,
+      tester
+          .widget<TextField>(find.widgetWithText(TextField, '技术要求'))
+          .controller!
+          .text,
       '≥42.5MPa',
     );
     expect(
-      tester.widget<TextField>(
-        find.widgetWithText(TextField, '标准代号（可选）'),
-      ).controller!.text,
+      tester
+          .widget<TextField>(find.widgetWithText(TextField, '标准代号（可选）'))
+          .controller!
+          .text,
       'GB/T 17671',
     );
     expect(find.text('合格'), findsWidgets);
@@ -158,6 +158,7 @@ void main() {
   });
 
   testWidgets('verdict 改判不合格：随保存请求体提交（I03，不走 setVerdict 端点）', (tester) async {
+    // fn: M03.F03.I03
     UpdateTestRecordRequest? captured;
     final (dio, adapter) = receiptRig();
     mockCatalog(adapter, records: [testRecordJson(id: 'tr-1')]);
@@ -218,9 +219,10 @@ void main() {
     expect(find.byType(DataEntrySheet), findsOneWidget);
     // 输入仍在（可重试）
     expect(
-      tester.widget<TextField>(
-        find.widgetWithText(TextField, '检测结果'),
-      ).controller!.text,
+      tester
+          .widget<TextField>(find.widgetWithText(TextField, '检测结果'))
+          .controller!
+          .text,
       '45.1',
     );
   });

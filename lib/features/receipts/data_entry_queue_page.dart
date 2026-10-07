@@ -53,9 +53,8 @@ class _DataEntryQueuePageState extends ConsumerState<DataEntryQueuePage> {
     );
     if (!mounted) return;
     if (saved ?? false) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('保存成功')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('保存成功')));
     }
     final kw = _keywordCtrl.text.trim();
     await ref

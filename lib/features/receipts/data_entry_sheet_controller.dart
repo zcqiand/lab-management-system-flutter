@@ -139,8 +139,9 @@ class DataEntrySheetController extends Notifier<DataEntrySheetState> {
         receiptId: receiptId,
         pageSize: 200,
       );
-      final parametersFuture = _dictApi
-          .inspectionDictionaryListParameters(pageSize: 200);
+      final parametersFuture = _dictApi.inspectionDictionaryListParameters(
+        pageSize: 200,
+      );
       final samplesRes = await samplesFuture;
       final parametersRes = await parametersFuture;
       final samples = samplesRes.data?.items ?? BuiltList<Sample>();
@@ -238,8 +239,9 @@ class DataEntrySheetController extends Notifier<DataEntrySheetState> {
       state = cur.copyWith(formError: '请完整填写检测结果与技术要求');
       return false;
     }
-    final standardCode =
-        cur.standardCode.trim().isEmpty ? null : cur.standardCode.trim();
+    final standardCode = cur.standardCode.trim().isEmpty
+        ? null
+        : cur.standardCode.trim();
     final existing = cur.currentRecord;
     state = DataEntrySheetSaving(cur);
     try {
@@ -287,8 +289,7 @@ class DataEntrySheetController extends Notifier<DataEntrySheetState> {
 }
 
 /// autoDispose family：一单一实例，收窗即焚。
-final dataEntrySheetControllerProvider =
-    NotifierProvider.autoDispose
-        .family<DataEntrySheetController, DataEntrySheetState, String>(
-          DataEntrySheetController.new,
-        );
+final dataEntrySheetControllerProvider = NotifierProvider.autoDispose
+    .family<DataEntrySheetController, DataEntrySheetState, String>(
+      DataEntrySheetController.new,
+    );
