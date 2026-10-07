@@ -10,6 +10,7 @@ import 'flow_status_label.dart';
 import 'receipt_detail_page.dart';
 import 'receipt_form_page.dart';
 import 'receipt_list_controller.dart';
+import 'data_entry_queue_page.dart';
 import 'task_queue_page.dart';
 
 /// 接样单列表（M03.F01.I01）。
@@ -90,6 +91,17 @@ class _ReceiptsListPageState extends ConsumerState<ReceiptsListPage> {
             onPressed: () => Navigator.push(
               context,
               MaterialPageRoute<void>(builder: (_) => const TaskQueuePage()),
+            ),
+          ),
+          // M03.F03.I01 队列入口（流程线第三环节）。
+          IconButton(
+            tooltip: '数据录入',
+            icon: const Icon(Icons.edit_note),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute<void>(
+                builder: (_) => const DataEntryQueuePage(),
+              ),
             ),
           ),
           IconButton(

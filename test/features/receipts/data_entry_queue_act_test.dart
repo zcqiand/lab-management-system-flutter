@@ -17,6 +17,7 @@ import 'package:lab_management_system_flutter/generated/lab_shared_generated.dar
 import '../../fakes/in_memory_token_store.dart';
 import '../../support/data_entry_fixtures.dart';
 import '../../support/receipt_fixtures.dart';
+import '../../support/task_assignment_fixtures.dart';
 
 /// 固定认证态桩（task_queue_act_test 同款）：有会话身份。
 class _AuthedNamedController extends AuthController {
@@ -96,9 +97,11 @@ void main() {
     await pumpQueue(tester, dio, [
       authControllerProvider.overrideWith(_AuthedNamedController.new),
     ]);
-    await tester.tap(find.byType(CheckboxListTile).at(0));
+    // 行 = ListTile + leading Checkbox（CheckboxListTile 内层 InkWell 吞
+    // 整行点击，行体要留「点开录入 sheet」——见 queue 页注释）。
+    await tester.tap(find.byType(Checkbox).at(0));
     await tester.pumpAndSettle();
-    await tester.tap(find.byType(CheckboxListTile).at(1));
+    await tester.tap(find.byType(Checkbox).at(1));
     await tester.pumpAndSettle();
     await tester.tap(find.widgetWithText(TextButton, '提交到报告审核'));
     await tester.pumpAndSettle();
@@ -242,15 +245,15 @@ void main() {
     await pumpQueue(tester, dio, [
       authControllerProvider.overrideWith(_AuthedNamedController.new),
     ]);
-    await tester.tap(find.byType(CheckboxListTile));
+    await tester.tap(find.byType(Checkbox));
     await tester.pumpAndSettle();
     await tester.tap(find.widgetWithText(TextButton, '退回任务分配'));
     await tester.pumpAndSettle();
     expect(find.text('当前阶段不可退回'), findsOneWidget);
     // 不崩栈：列表仍在、选择保留（可重试）
-    expect(find.byType(CheckboxListTile), findsOneWidget);
+    expect(find.byType(Checkbox), findsOneWidget);
     expect(
-      tester.widget<CheckboxListTile>(find.byType(CheckboxListTile)).value,
+      tester.widget<Checkbox>(find.byType(Checkbox)).value,
       isTrue,
     );
   });
