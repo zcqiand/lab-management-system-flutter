@@ -51,3 +51,14 @@
 | M03.F03.I02 | 保存检测记录 | 变更 | 规划 → 开发中（T3） | T3 |
 | M03.F03.I03 | 人工改判 verdict | 变更 | 规划 → 开发中（T3） | T3 |
 | M03.F03.I12 | 数据录入-提交（act 三动作） | 变更 | 规划 → 开发中（T2） | T2 |
+
+
+## 5. 人工验收记录（GA 前置锚）
+
+- 远门 2026-10-07：133/133 测试 + analyze 0 + suite 门禁全绿 EXIT=0；trace 恰 4 ID
+  （I01/I02/I03/I12 各 1，零 inert）。
+- **✅ 2026-10-07 人工验收通过**：AC-1~AC-7 全路径过（浏览器 http://localhost:5208
+  走数据录入队列/录入 sheet 回填/POST-PUT 保存/act 三动作；环境与分场景实录见
+  `ACCEPTANCE-2026-10-07-m03f03-f08.md`，人批同日给出）。环境：lab-nextjs `:5201` +
+  lab-flutter `:5208`；凭据 alice/dev123456。GA 翻转 M03.F03 + I01/I02/I03/I12 共 5 行
+  随批执行（`tree_change.py --apply` 免批通道，lab M03.F02 先例同构）。
