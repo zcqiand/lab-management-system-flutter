@@ -10,6 +10,7 @@ import 'package:lab_management_system_flutter/core/auth/auth_controller.dart';
 import 'package:lab_management_system_flutter/core/auth/auth_state.dart';
 import 'package:lab_management_system_flutter/core/auth/providers.dart';
 import 'package:lab_management_system_flutter/features/receipts/receipts_list_page.dart';
+import 'package:lab_management_system_flutter/features/receipts/report_phase_queue_controller.dart';
 import 'package:lab_management_system_flutter/features/receipts/report_phase_queue_page.dart';
 import 'package:lab_management_system_flutter/generated/lab_shared_generated.dart'
     hide AuthState;

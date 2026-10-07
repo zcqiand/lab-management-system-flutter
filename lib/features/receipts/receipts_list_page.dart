@@ -11,6 +11,7 @@ import 'receipt_detail_page.dart';
 import 'receipt_form_page.dart';
 import 'receipt_list_controller.dart';
 import 'data_entry_queue_page.dart';
+import 'report_phase_queue_page.dart';
 import 'task_queue_page.dart';
 
 /// 接样单列表（M03.F01.I01）。
@@ -101,6 +102,51 @@ class _ReceiptsListPageState extends ConsumerState<ReceiptsListPage> {
               context,
               MaterialPageRoute<void>(
                 builder: (_) => const DataEntryQueuePage(),
+              ),
+            ),
+          ),
+          // M03.F05-F08.I01 队列入口（流程线第四至七环节：审核/批准/发放/归档）。
+          IconButton(
+            tooltip: '报告审核',
+            icon: const Icon(Icons.fact_check_outlined),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute<void>(
+                builder: (_) =>
+                    const ReportPhaseQueuePage(phase: FlowStatus.review),
+              ),
+            ),
+          ),
+          IconButton(
+            tooltip: '报告批准',
+            icon: const Icon(Icons.verified_outlined),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute<void>(
+                builder: (_) =>
+                    const ReportPhaseQueuePage(phase: FlowStatus.approval),
+              ),
+            ),
+          ),
+          IconButton(
+            tooltip: '报告发放',
+            icon: const Icon(Icons.outbound),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute<void>(
+                builder: (_) =>
+                    const ReportPhaseQueuePage(phase: FlowStatus.issuance),
+              ),
+            ),
+          ),
+          IconButton(
+            tooltip: '报告归档',
+            icon: const Icon(Icons.inventory_2_outlined),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute<void>(
+                builder: (_) =>
+                    const ReportPhaseQueuePage(phase: FlowStatus.archived),
               ),
             ),
           ),
