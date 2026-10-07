@@ -187,8 +187,7 @@ class ReportPhaseQueueController extends Notifier<ReportPhaseQueueState> {
 
 /// autoDispose family（F03 口径：页级业务 provider 随页 pop 即 dispose），
 /// 一阶段一实例。
-final reportPhaseQueueControllerProvider =
-    NotifierProvider.autoDispose
-        .family<ReportPhaseQueueController, ReportPhaseQueueState, FlowStatus>(
-          ReportPhaseQueueController.new,
-        );
+final reportPhaseQueueControllerProvider = NotifierProvider.autoDispose
+    .family<ReportPhaseQueueController, ReportPhaseQueueState, FlowStatus>(
+      ReportPhaseQueueController.new,
+    );

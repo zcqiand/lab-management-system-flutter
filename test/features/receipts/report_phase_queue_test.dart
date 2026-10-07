@@ -46,14 +46,38 @@ class _PhaseSpec {
 }
 
 const _specs = [
-  _PhaseSpec(FlowStatus.review, 'review', '报告审核', '/api/receipts/review/act',
-      '审核通过', '退回数据录入'),
-  _PhaseSpec(FlowStatus.approval, 'approval', '报告批准',
-      '/api/receipts/approve/act', '批准', '退回审核'),
-  _PhaseSpec(FlowStatus.issuance, 'issuance', '报告发放',
-      '/api/receipts/issuance/act', '发放', '退回批准'),
-  _PhaseSpec(FlowStatus.archived, 'archived', '报告归档',
-      '/api/receipts/archived/act', '归档完成', '退回发放'),
+  _PhaseSpec(
+    FlowStatus.review,
+    'review',
+    '报告审核',
+    '/api/receipts/review/act',
+    '审核通过',
+    '退回数据录入',
+  ),
+  _PhaseSpec(
+    FlowStatus.approval,
+    'approval',
+    '报告批准',
+    '/api/receipts/approve/act',
+    '批准',
+    '退回审核',
+  ),
+  _PhaseSpec(
+    FlowStatus.issuance,
+    'issuance',
+    '报告发放',
+    '/api/receipts/issuance/act',
+    '发放',
+    '退回批准',
+  ),
+  _PhaseSpec(
+    FlowStatus.archived,
+    'archived',
+    '报告归档',
+    '/api/receipts/archived/act',
+    '归档完成',
+    '退回发放',
+  ),
 ];
 
 void main() {
@@ -79,7 +103,9 @@ void main() {
 
   // ---- I01 ×4：各阶段队列固定 flowStatus 查询 + 行渲染 ----
 
-  testWidgets('审核队列固定 flowStatus=review 查询 + 标题（@entry I01 证明）', (tester) async {
+  testWidgets('审核队列固定 flowStatus=review 查询 + 标题（@entry I01 证明）', (
+    tester,
+  ) async {
     // fn: M03.F05.I01
     final spec = _specs[0];
     String? capturedFlowStatus;
@@ -87,9 +113,7 @@ void main() {
     adapter.onGet('/api/receipts', (server) {
       server.reply(200, (RequestOptions options) {
         capturedFlowStatus = options.uri.queryParameters['flowStatus'];
-        return receiptListJson([
-          receiptJson(id: 'r-1', flowStatus: spec.wire),
-        ]);
+        return receiptListJson([receiptJson(id: 'r-1', flowStatus: spec.wire)]);
       });
     });
     await pumpPhase(tester, dio, spec);
@@ -106,9 +130,7 @@ void main() {
     adapter.onGet('/api/receipts', (server) {
       server.reply(200, (RequestOptions options) {
         capturedFlowStatus = options.uri.queryParameters['flowStatus'];
-        return receiptListJson([
-          receiptJson(id: 'r-1', flowStatus: spec.wire),
-        ]);
+        return receiptListJson([receiptJson(id: 'r-1', flowStatus: spec.wire)]);
       });
     });
     await pumpPhase(tester, dio, spec);
@@ -125,9 +147,7 @@ void main() {
     adapter.onGet('/api/receipts', (server) {
       server.reply(200, (RequestOptions options) {
         capturedFlowStatus = options.uri.queryParameters['flowStatus'];
-        return receiptListJson([
-          receiptJson(id: 'r-1', flowStatus: spec.wire),
-        ]);
+        return receiptListJson([receiptJson(id: 'r-1', flowStatus: spec.wire)]);
       });
     });
     await pumpPhase(tester, dio, spec);
@@ -144,9 +164,7 @@ void main() {
     adapter.onGet('/api/receipts', (server) {
       server.reply(200, (RequestOptions options) {
         capturedFlowStatus = options.uri.queryParameters['flowStatus'];
-        return receiptListJson([
-          receiptJson(id: 'r-1', flowStatus: spec.wire),
-        ]);
+        return receiptListJson([receiptJson(id: 'r-1', flowStatus: spec.wire)]);
       });
     });
     await pumpPhase(tester, dio, spec);
@@ -370,7 +388,9 @@ void main() {
     expect(captured!.operator_, '测试用户');
   });
 
-  testWidgets('发放退回：按钮 return → POST issuance/act action=return', (tester) async {
+  testWidgets('发放退回：按钮 return → POST issuance/act action=return', (
+    tester,
+  ) async {
     final spec = _specs[2];
     FlowActionRequest? captured;
     final (dio, adapter) = receiptRig();
@@ -440,13 +460,16 @@ void main() {
     // fn: M03.F07.I02
     final (dio, adapter) = receiptRig();
     adapter.onGet('/api/receipts', (server) {
-      server.reply(200, receiptListJson([
-        receiptJson(
-          id: 'r-1',
-          flowStatus: 'issuance',
-          overrides: {'reportCode': 'BG-2026-007'},
-        ),
-      ]));
+      server.reply(
+        200,
+        receiptListJson([
+          receiptJson(
+            id: 'r-1',
+            flowStatus: 'issuance',
+            overrides: {'reportCode': 'BG-2026-007'},
+          ),
+        ]),
+      );
     });
     await pumpPhase(tester, dio, _specs[2]);
     expect(find.text('BG-2026-007'), findsOneWidget);
@@ -475,24 +498,20 @@ void main() {
     ]);
     expect(
       tester
-          .widget<TextButton>(
-            find.widgetWithText(TextButton, spec.submitLabel),
-          )
+          .widget<TextButton>(find.widgetWithText(TextButton, spec.submitLabel))
           .onPressed,
       isNull,
     );
     expect(
       tester
-          .widget<TextButton>(
-            find.widgetWithText(TextButton, spec.returnLabel),
-          )
+          .widget<TextButton>(find.widgetWithText(TextButton, spec.returnLabel))
           .onPressed,
       isNull,
     );
     expect(
-      tester.widget<TextButton>(
-        find.widgetWithText(TextButton, '撤回'),
-      ).onPressed,
+      tester
+          .widget<TextButton>(find.widgetWithText(TextButton, '撤回'))
+          .onPressed,
       isNull,
     );
     expect(actCalls, 0);

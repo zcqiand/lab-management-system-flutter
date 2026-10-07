@@ -94,7 +94,8 @@ class _ReportPhaseQueuePageState extends ConsumerState<ReportPhaseQueuePage> {
     final operator = _resolveOperator(ref.watch(authControllerProvider));
     final acting = queueState is ReportPhaseQueueActing;
     final hasSelection =
-        queueState is ReportPhaseQueueLoaded && queueState.selectedIds.isNotEmpty;
+        queueState is ReportPhaseQueueLoaded &&
+        queueState.selectedIds.isNotEmpty;
     final actEnabled = hasSelection && !acting && operator != null;
     void runAct(FlowAction action) => ref
         .read(reportPhaseQueueControllerProvider(widget.phase).notifier)
@@ -172,9 +173,8 @@ class _ReportPhaseQueuePageState extends ConsumerState<ReportPhaseQueuePage> {
                     final kw = _keywordCtrl.text.trim();
                     return ref
                         .read(
-                          reportPhaseQueueControllerProvider(
-                            widget.phase,
-                          ).notifier,
+                          reportPhaseQueueControllerProvider(widget.phase)
+                              .notifier,
                         )
                         .load(keyword: kw.isEmpty ? null : kw, silent: true);
                   },
@@ -191,9 +191,8 @@ class _ReportPhaseQueuePageState extends ConsumerState<ReportPhaseQueuePage> {
                           value: selectedIds.contains(r.id),
                           onChanged: (_) => ref
                               .read(
-                                reportPhaseQueueControllerProvider(
-                                  widget.phase,
-                                ).notifier,
+                                reportPhaseQueueControllerProvider(widget.phase)
+                                    .notifier,
                               )
                               .toggleSelect(r.id),
                         ),
