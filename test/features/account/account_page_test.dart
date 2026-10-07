@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:http_mock_adapter/http_mock_adapter.dart';
 
 import 'package:lab_management_system_flutter/core/api/session_guard.dart';
 import 'package:lab_management_system_flutter/core/auth/providers.dart';
@@ -19,15 +18,23 @@ void main() {
     String username = 'wang',
     String? displayName = '王检验',
     String? roleCode = 'lab_user',
-  }) =>
-      {'id': id, 'username': username, 'displayName': displayName, 'roleCode': roleCode};
+  }) => {
+    'id': id,
+    'username': username,
+    'displayName': displayName,
+    'roleCode': roleCode,
+  };
 
   Map<String, dynamic> tenantJson({
     String id = 't-1',
     String code = 'phys',
     String name = '理化检测部',
-  }) =>
-      {'tenantId': id, 'code': code, 'name': name, 'roleIds': <String>['r-1']};
+  }) => {
+    'tenantId': id,
+    'code': code,
+    'name': name,
+    'roleIds': <String>['r-1'],
+  };
 
   Map<String, dynamic> sessionJson({String currentTenantId = 't-1'}) => {
     'user': userJson(),
@@ -71,15 +78,15 @@ void main() {
     matching: find.text(label),
   );
 
-  testWidgets('账户页：GET /auth/me 会话渲染 + 当前租户标记（F01 证明）', (
-    tester,
-  ) async {
+  testWidgets('账户页：GET /auth/me 会话渲染 + 当前租户标记（F01 证明）', (tester) async {
     // fn: M00.F01
     var meCount = 0;
     final (dio, adapter) = receiptRig();
     adapter.onGet('/api/auth/me', (server) {
-      meCount++;
-      return server.reply(200, sessionJson());
+      server.reply(200, (RequestOptions options) {
+        meCount++;
+        return sessionJson();
+      });
     });
     final store = InMemoryTokenStore()..debugOverwrite(accessToken: 'tok-old');
     await pumpAccount(tester, dio, store);
@@ -103,8 +110,10 @@ void main() {
     String? receiptsPath;
     final (dio, adapter) = receiptRig();
     adapter.onGet('/api/auth/me', (server) {
-      meCount++;
-      return server.reply(200, sessionJson());
+      server.reply(200, (RequestOptions options) {
+        meCount++;
+        return sessionJson();
+      });
     });
     adapter.onPost('/api/auth/switch-tenant', (server) {
       server.reply(200, (RequestOptions options) {
@@ -113,13 +122,10 @@ void main() {
       });
     });
     adapter.onGet('/api/receipts', (server) {
-      return server.reply(
-        200,
-        (RequestOptions options) {
-          receiptsPath = options.uri.path;
-          return <String, dynamic>{'items': <Map<String, dynamic>>[], 'total': 0};
-        },
-      );
+      return server.reply(200, (RequestOptions options) {
+        receiptsPath = options.uri.path;
+        return <String, dynamic>{'items': <Map<String, dynamic>>[], 'total': 0};
+      });
     });
     final store = InMemoryTokenStore()..debugOverwrite(accessToken: 'tok-old');
     await pumpAccount(tester, dio, store);
@@ -140,8 +146,10 @@ void main() {
     String? receiptsPath;
     final (dio, adapter) = receiptRig();
     adapter.onGet('/api/auth/me', (server) {
-      meCount++;
-      return server.reply(200, sessionJson());
+      server.reply(200, (RequestOptions options) {
+        meCount++;
+        return sessionJson();
+      });
     });
     adapter.onPost('/api/auth/switch-tenant', (server) {
       server.reply(409, <String, dynamic>{'message': 'conflict'});

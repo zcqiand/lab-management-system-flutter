@@ -77,6 +77,27 @@ class AuthController extends Notifier<AuthState> {
     }
   }
 
+  /// 租户切换（REQ-2026-011 M00.F02.I01）：POST /auth/switch-tenant 换发
+  /// token 对落 store（保持 Authed 不回登录页）；失败 return false 不动
+  /// store。会话面（currentTenantId）由账户页重取 /auth/me。
+  Future<bool> switchTenant(String tenantId) async {
+    try {
+      final resp = await _api.authSwitchTenant(
+        switchTenantRequest: SwitchTenantRequest((b) => b..tenantId = tenantId),
+      );
+      final body = resp.data;
+      final access = body?.token;
+      if (body == null || access == null || access.isEmpty) return false;
+      await _store.save(
+        accessToken: access,
+        refreshToken: body.refreshToken, // 契约可选，可空直存（login 同纪律）
+      );
+      return true;
+    } on Exception {
+      return false;
+    }
+  }
+
   /// 登出（M01.F05.I04）：服务端尽力通知，本地清空必达（有 token 才调服务端）。
   Future<void> logout() async {
     final access = await _store.readAccessToken();

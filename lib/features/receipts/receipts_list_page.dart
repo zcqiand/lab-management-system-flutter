@@ -7,6 +7,7 @@ import 'package:lab_management_system_flutter/generated/lab_shared_generated.dar
     hide AuthState;
 
 import 'flow_status_label.dart';
+import '../account/account_page.dart';
 import 'receipt_detail_page.dart';
 import 'receipt_form_page.dart';
 import 'receipt_list_controller.dart';
@@ -148,6 +149,15 @@ class _ReceiptsListPageState extends ConsumerState<ReceiptsListPage> {
                 builder: (_) =>
                     const ReportPhaseQueuePage(phase: FlowStatus.archived),
               ),
+            ),
+          ),
+          // 账户入口（REQ-2026-011 M00.F01）：会话渲染 + 租户切换器。
+          IconButton(
+            tooltip: '账户',
+            icon: const Icon(Icons.person_outline),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute<void>(builder: (_) => const AccountPage()),
             ),
           ),
           IconButton(
