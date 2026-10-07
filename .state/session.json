@@ -13,5 +13,8 @@
     "不要改 .harness/stack.json 让门变松",
     "不要给 skip 的测试挂功能 ID"
   ],
-  "last_gate_passed_at": "2026-10-06（gate exit 0：73 tests / analyze 0 / trace 恰 12）"
+  "last_gate_passed_at": "2026-10-06（gate exit 0：73 tests / analyze 0 / trace 恰 12）",
+  "last_slice": "REQ-2026-005/006 GA 已收口：人工验收通过（2026-10-07），21 行 →已上线（f4d1d1c 已推），ACCEPTANCE-2026-10-07-m03f03-f08 入档",
+  "pending": "后续候选：M00.F01 会话 / M00.F02 登录选租户+切换器 / M01.F05.I03 SSO / M03.F09.I03 报告预览；模块行 M00/M01/M03 仍规划态（规划→已上线不在免批类，需人裁）",
+  "updated": "2026-10-07"
 }
