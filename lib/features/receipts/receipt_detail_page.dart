@@ -9,6 +9,7 @@ import 'package:lab_management_system_flutter/generated/lab_shared_generated.dar
 
 import 'flow_status_label.dart';
 import 'receipt_detail_controller.dart';
+import 'report_preview_page.dart';
 import 'receipt_form_controller.dart';
 import 'receipt_form_page.dart';
 import 'receipt_list_controller.dart';
@@ -112,6 +113,24 @@ class _ReceiptDetailPageState extends ConsumerState<ReceiptDetailPage> {
       appBar: AppBar(
         title: const Text('接样单详情'),
         actions: [
+          IconButton(
+            tooltip: '报告预览',
+            icon: const Icon(Icons.description_outlined),
+            onPressed: () {
+              // Ready 态才可点：入口要 categoryCode（门定义按类别取）。
+              final loaded = detailState;
+              if (loaded is! ReceiptDetailLoaded) return;
+              Navigator.push(
+                context,
+                MaterialPageRoute<void>(
+                  builder: (_) => ReportPreviewPage(
+                    receiptId: widget.receiptId,
+                    categoryCode: loaded.receipt.categoryCode,
+                  ),
+                ),
+              );
+            },
+          ),
           IconButton(
             tooltip: '删除',
             icon: const Icon(Icons.delete_outline),

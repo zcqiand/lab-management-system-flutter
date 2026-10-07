@@ -83,11 +83,7 @@ void main() {
         reportNamesJson(
           extFieldDefs: [
             extFieldDefJson(key: 'slump', label: '坍落度'),
-            extFieldDefJson(
-              key: 'srcOnly',
-              label: '登记侧字段',
-              source: 'receipt',
-            ),
+            extFieldDefJson(key: 'srcOnly', label: '登记侧字段', source: 'receipt'),
           ],
         ),
       );
@@ -151,10 +147,7 @@ void main() {
     final s = container.read(reportPreviewControllerProvider);
     final ready = s as ReportPreviewReady;
     expect(ready.gateFormFields.map((d) => d.key), ['slump']);
-    expect(
-      ready.gateFormFields.map((d) => d.key),
-      isNot(contains('srcOnly')),
-    );
+    expect(ready.gateFormFields.map((d) => d.key), isNot(contains('srcOnly')));
   });
 
   test('装载失败：整体清空进错误态（不留半写）', () async {
@@ -163,7 +156,9 @@ void main() {
     adapter.onGet('/api/samples', (server) {
       server.reply(
         200,
-        samplesListJson([sampleJson(id: 's-1', ext: const {'slump': '180'})]),
+        samplesListJson([
+          sampleJson(id: 's-1', ext: const {'slump': '180'}),
+        ]),
       );
     });
     adapter.onGet('/api/test-records', (server) {
