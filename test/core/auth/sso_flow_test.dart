@@ -10,6 +10,7 @@ import 'package:lab_management_system_flutter/core/auth/auth_state.dart';
 import 'package:lab_management_system_flutter/core/auth/login_page.dart';
 import 'package:lab_management_system_flutter/core/auth/providers.dart';
 import 'package:lab_management_system_flutter/core/auth/sso_flow.dart';
+import 'package:lab_management_system_flutter/core/auth/sso_state_store.dart';
 import 'package:lab_management_system_flutter/generated/lab_shared_generated.dart'
     hide AuthState;
 
@@ -33,14 +34,17 @@ void main() {
     return (dio, adapter);
   }
 
-  SsoFlow flow(Dio dio, SsoStateStore store, void Function(LoginResponse) onAdopt,
-          void Function(String) navigate) =>
-      SsoFlow(
-        api: AuthApi(dio, standardSerializers),
-        stateStore: store,
-        onAdopt: onAdopt,
-        navigate: navigate,
-      );
+  SsoFlow flow(
+    Dio dio,
+    SsoStateStore store,
+    void Function(LoginResponse) onAdopt,
+    void Function(String) navigate,
+  ) => SsoFlow(
+    api: AuthApi(dio, standardSerializers),
+    stateStore: store,
+    onAdopt: onAdopt,
+    navigate: navigate,
+  );
 
   Future<void> pumpLogin(
     WidgetTester tester,
@@ -65,7 +69,7 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  testWidgets('generateState：base64url 无填充 43 字符防重放', (tester) async {
+  test('generateState：base64url 无填充 43 字符防重放', () async {
     final a = SsoFlow.generateState();
     final b = SsoFlow.generateState();
     expect(a, matches(RegExp(r'^[A-Za-z0-9_-]{43}$')));
@@ -73,7 +77,7 @@ void main() {
     expect(a, isNot(b));
   });
 
-  testWidgets('parseCallback：缺 code/state 不收', (tester) async {
+  test('parseCallback：缺 code/state 不收', () async {
     expect(SsoFlow.parseCallback(Uri.parse('http://x/?state=s')), isNull);
     expect(SsoFlow.parseCallback(Uri.parse('http://x/?code=c')), isNull);
     expect(SsoFlow.parseCallback(Uri.parse('http://x/?code=&state=s')), isNull);
@@ -83,22 +87,19 @@ void main() {
     expect(cb.state, 's');
   });
 
-  testWidgets('发起：authorize 四查询参 + 落账 + 跳 IdP', (tester) async {
+  test('发起：authorize 四查询参 + 落账 + 跳 IdP', () async {
     // fn: M01.F05.I03
     Map<String, String>? q;
     String? navUrl;
     final (dio, adapter) = rig();
     adapter.onGet('/api/auth/sso/authorize', (server) {
-      server.reply(
-        200,
-        (RequestOptions options) {
-          q = options.uri.queryParameters;
-          return {
-            'authorizeUrl': 'https://saas.local/oauth/authorize?client_id=x',
-            'state': 'srv-state',
-          };
-        },
-      );
+      server.reply(200, (RequestOptions options) {
+        q = options.uri.queryParameters;
+        return {
+          'authorizeUrl': 'https://saas.local/oauth/authorize?client_id=x',
+          'state': 'srv-state',
+        };
+      });
     });
     final store = InMemorySsoStateStore();
     final f = flow(dio, store, (_) {}, (u) => navUrl = u);
@@ -118,18 +119,15 @@ void main() {
     expect(navUrl, 'https://saas.local/oauth/authorize?client_id=x');
   });
 
-  testWidgets('发起：配置缺失 fail-fast 不打 authorize', (tester) async {
+  test('发起：配置缺失 fail-fast 不打 authorize', () async {
     var hits = 0;
     String? navUrl;
     final (dio, adapter) = rig();
     adapter.onGet('/api/auth/sso/authorize', (server) {
-      server.reply(
-        200,
-        (RequestOptions options) {
-          hits++;
-          return {'authorizeUrl': 'https://saas.local/x', 'state': 's'};
-        },
-      );
+      server.reply(200, (RequestOptions options) {
+        hits++;
+        return {'authorizeUrl': 'https://saas.local/x', 'state': 's'};
+      });
     });
     final f = flow(dio, InMemorySsoStateStore(), (_) {}, (u) => navUrl = u);
     final err = await f.start(clientId: '   ', redirectUri: 'http://x/');
@@ -138,17 +136,14 @@ void main() {
     expect(navUrl, isNull);
   });
 
-  testWidgets('回跳：state 不匹配拒换不打 exchange（AC-2）', (tester) async {
+  test('回跳：state 不匹配拒换不打 exchange（AC-2）', () async {
     var exchangeHits = 0;
     final (dio, adapter) = rig();
     adapter.onPost('/api/auth/sso/callback', (server) {
-      server.reply(
-        500,
-        (RequestOptions options) {
-          exchangeHits++;
-          return <String, dynamic>{};
-        },
-      );
+      server.reply(500, (RequestOptions options) {
+        exchangeHits++;
+        return <String, dynamic>{};
+      });
     });
     final store = InMemorySsoStateStore();
     await store.save(state: 'S-issued', redirectUri: 'http://localhost:5208/');
@@ -162,18 +157,15 @@ void main() {
     expect(store.read(), completion(isNull));
   });
 
-  testWidgets('回跳：四字段换发落账 adopt（AC-1）', (tester) async {
+  test('回跳：四字段换发落账 adopt（AC-1）', () async {
     Map<String, dynamic>? raw;
     LoginResponse? adopted;
     final (dio, adapter) = rig();
     adapter.onPost('/api/auth/sso/callback', (server) {
-      server.reply(
-        200,
-        (RequestOptions options) {
-          raw = options.data as Map<String, dynamic>;
-          return okBody();
-        },
-      );
+      server.reply(200, (RequestOptions options) {
+        raw = options.data as Map<String, dynamic>;
+        return okBody();
+      });
     });
     final store = InMemorySsoStateStore();
     await store.save(state: 'S-issued', redirectUri: 'http://localhost:5208/');
@@ -192,7 +184,7 @@ void main() {
     expect(store.read(), completion(isNull));
   });
 
-  testWidgets('回跳：换发失败 token 不动可重试（AC-4）', (tester) async {
+  test('回跳：换发失败 token 不动可重试（AC-4）', () async {
     LoginResponse? adopted;
     final (dio, adapter) = rig();
     adapter.onPost('/api/auth/sso/callback', (server) {
@@ -247,7 +239,9 @@ void main() {
         ],
         child: MaterialApp(
           home: LoginPage(
-            initialUri: Uri.parse('http://localhost:5208/?code=cc&state=S-issued'),
+            initialUri: Uri.parse(
+              'http://localhost:5208/?code=cc&state=S-issued',
+            ),
           ),
         ),
       ),

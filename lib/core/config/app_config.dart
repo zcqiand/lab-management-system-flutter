@@ -7,6 +7,12 @@ class AppConfig {
 
   static const String apiBaseUrl = String.fromEnvironment('API_BASE_URL');
 
+  /// SSO OAuth client_id（REQ-2026-015）：saas IdP 侧 oauth_client 注册值
+  /// （家族接线 clientId=`lab-management`）。点按时 fail-fast（swift AC-3
+  /// 同款 UX——缺失报配置缺失不发 authorize，不破坏既有 dev 启动；
+  /// String.fromEnvironment 缺失返空串，与「显式设空」不可区分，故取点按拦截）。
+  static const String saasClientId = String.fromEnvironment('SAAS_CLIENT_ID');
+
   /// 启动校验入口：main() 第一行调用。
   static void validate() => validateBaseUrl(apiBaseUrl);
 

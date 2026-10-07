@@ -77,6 +77,28 @@ class AuthController extends Notifier<AuthState> {
     }
   }
 
+  /// SSO 回跳换发成功收口（REQ-2026-015 M01.F05.I03）：login() 尾段同构
+  /// （token 非空校验 → save → Authed；displayName 回退链 RF#1 一处解析）。
+  /// body 由 SsoFlow 换发成功后投递；令牌缺失仍守门（防御式，同文案）。
+  Future<void> adoptSsoLogin(LoginResponse body) async {
+    // lab 契约 token 非空（可空面在 SsoFlow 换发处已把关）；这里守空串。
+    if (body.token.isEmpty) {
+      state = const AuthFailed('登录失败：服务端响应缺少令牌');
+      return;
+    }
+    await _store.save(
+      accessToken: body.token,
+      refreshToken: body.refreshToken, // 契约可选，可空直存（login 同纪律）
+    );
+    final user = body.user;
+    state = Authed(
+      userId: user.id,
+      displayName: (user.displayName?.isNotEmpty == true)
+          ? user.displayName
+          : user.username,
+    );
+  }
+
   /// 租户切换（REQ-2026-011 M00.F02.I01）：POST /auth/switch-tenant 换发
   /// token 对落 store（保持 Authed 不回登录页）；失败 return false 不动
   /// store。会话面（currentTenantId）由账户页重取 /auth/me。
