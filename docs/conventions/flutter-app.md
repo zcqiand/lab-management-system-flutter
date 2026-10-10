@@ -9,10 +9,11 @@
 | web dev → lab-nextjs | `http://localhost:5201` | `flutter run -d chrome --web-port 5208 --dart-define=API_BASE_URL=http://localhost:5201` |
 | web dev → aspnetcore/springboot/fastapi | `http://localhost:5204 / 5205 / 5207` | 同上换值 |
 | Android 模拟器 | `http://10.0.2.2:<后端槽位>`（模拟器 localhost 是自己，非宿主） | `flutter run -d emulator... --dart-define=...` |
+| **prod（Dockerfile 烘焙）** | `https://lab-nextjs.xiangru.uk` | docker build（`--dart-define` 烘焙，见仓根 Dockerfile） |
 
 - **web dev 端口钉死 5208**（家族扩展段首位，lab.md 值表 + multi-repo-family.md §6）。禁裸 `flutter run -d chrome`（随机端口进不了后端 CORS 白名单——「裸 curl 通、带 Origin 500」指纹）。
-- CORS：后端 `LAB_CORS_ALLOWED_ORIGINS` 追加 `http://localhost:5208` 是 **Phase 2** 接真后端时的后端仓改动，Phase 0b 不动。
-- prod 基线 URL 待 Phase 2+ 定（家族惯例 `https://<family>-<stack>.xiangru.uk`，client 仓无部署端口）。
+- CORS：后端 `LAB_CORS_ALLOWED_ORIGINS` 白名单含 dev origin `http://localhost:5208` 与 prod origin `https://lab-flutter.xiangru.uk`（origin 级追加，deploy 脚本三处：bootstrap/append_if_missing/reconcile 循环）。
+- prod 基线已定版（2026-10-11，X08 扩展槽位进 deploy 链，照 saas-flutter 首航先例）：`https://lab-flutter.xiangru.uk`，API_BASE_URL 烘焙 `https://lab-nextjs.xiangru.uk`、SAAS_CLIENT_ID 烘焙 `lab-management`。SAAS_CLIENT_ID 仅 SSO 授权码流消费（REQ-2026-015）；原生登录不经过它。
 
 ## 2. Riverpod 分层约定
 

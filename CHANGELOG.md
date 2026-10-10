@@ -1,5 +1,10 @@
 # 更新日志
 
+## v0.2.1 — 2026-10-11
+
+- prod 部署链启用（X08 扩展槽位，照 saas-flutter 2026-10-10 首航先例）：`https://lab-flutter.xiangru.uk`——Dockerfile（官方 tarball builder 3.47.6 + dart-define 烘焙 `https://lab-nextjs.xiangru.uk`/`lab-management` + 烘焙断言 + safe.directory 预埋）、nginx.conf、deploy/ 五件套、首条 CI（test 四门对齐 harness + tag 触发 deploy）
+- 家族约定同步：X08 行进 deploy 链（suite lab.md + multi-repo-family.md §6/§6.1 两处同 commit）；5 后端 deploy 脚本 CORS 追加 prod origin
+
 ## v0.2.0 — 2026-10-06
 
 ### Added

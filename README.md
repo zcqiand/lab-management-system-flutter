@@ -56,6 +56,14 @@ bash scripts/gen-shared.sh
 - 范围：M00 概要/M01/M03（与 lab-swift 同源裁剪）；M/F 编号沿用 react 仓功能树（同 shared BASE 双账本），便于跨仓对照。
 - UI/交互参照：`../lab-management-system-react`（参照实现，非基线）。
 
+## 生产部署
+
+- prod 地址：`https://lab-flutter.xiangru.uk`（静态 SPA 容器：容器内 :80 → VPS `127.0.0.1:5208`，nginx 反代；形态照 saas-flutter 先例）
+- 部署 = 打 tag 走 CI：`git tag v<X.Y.Z>-<YYYYMMDD> && git push origin <tag>`（全量回归绿后打，tag 铁律）
+- 所需 GitHub Secrets（5 个，值与家族同源）：`DOCKER_USERNAME` / `DOCKER_PASSWORD` / `VPS_HOST` / `VPS_USER` / `VPS_SSH_KEY`
+- prod 配置烘焙在 Dockerfile（`--dart-define`：API_BASE_URL=`https://lab-nextjs.xiangru.uk`、SAAS_CLIENT_ID=`lab-management`），无 runtime env；回滚 = VPS 重跑 deploy 脚本带旧 tag
+- SSO 按钮依赖 saas IdP 侧 lab-management 的 redirect 白名单注册（REQ-2026-015 挂账前置项），原生登录不受影响
+
 ## 快速链接
 
 - [CLAUDE.md](CLAUDE.md) — 开发约定与编码规范
