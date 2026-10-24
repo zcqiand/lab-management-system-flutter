@@ -64,6 +64,22 @@ bash scripts/gen-shared.sh
 - prod 配置烘焙在 Dockerfile（`--dart-define`：API_BASE_URL=`https://lab-nextjs.xiangru.uk`、SAAS_CLIENT_ID=`lab-management`），无 runtime env；回滚 = VPS 重跑 deploy 脚本带旧 tag
 - SSO 按钮依赖 saas IdP 侧 lab-management 的 redirect 白名单注册（REQ-2026-015 挂账前置项），原生登录不受影响
 
+## 配套书籍及章节映射
+
+> 同一案例仓后续接入其他书籍时，在此节下新增书籍小节。
+
+### 书一《Flutter 从入门到项目实践》（卷四）
+
+- 书稿定位：xr-know-019，第 24、25、26、27 章正文代码块挂本仓 `source=` 锚点
+- 配套版本：`v0.2.1-20261011`（registry 冻结 tag，代码以此为准）
+
+| 章 | 章题 | 对应源文件 |
+| :--- | :--- | :--- |
+| 24 | 案例一：项目立项与架构设计 | `lib/core/auth/login_page.dart` + `lib/features/receipts/receipts_list_page.dart` |
+| 25 | 案例一：接样单业务 CRUD | `lib/features/receipts/receipts_list_page.dart` |
+| 26 | 案例一：流程引擎七阶段 | `lib/features/receipts/task_queue_page.dart` + `lib/features/receipts/task_assign_dialog.dart` + `lib/features/receipts/data_entry_queue_page.dart` + `lib/features/receipts/data_entry_sheet.dart` + `lib/features/receipts/report_phase_queue_page.dart` |
+| 27 | 案例一：测试与交付 | — |
+
 ## 快速链接
 
 - [CLAUDE.md](CLAUDE.md) — 开发约定与编码规范
