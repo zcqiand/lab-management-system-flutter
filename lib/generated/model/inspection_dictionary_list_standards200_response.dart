@@ -14,8 +14,8 @@ part 'inspection_dictionary_list_standards200_response.g.dart';
 ///
 /// Properties:
 /// * [items]
-/// * [page]
-/// * [pageSize]
+/// * [page] - 当前实现仅回显，不切片：参照实现返回全量，无分页语义。
+/// * [pageSize] - 当前实现仅回显，不切片。
 /// * [total]
 @BuiltValue()
 abstract class InspectionDictionaryListStandards200Response
@@ -27,9 +27,11 @@ abstract class InspectionDictionaryListStandards200Response
   @BuiltValueField(wireName: r'items')
   BuiltList<InspectionStandard> get items;
 
+  /// 当前实现仅回显，不切片：参照实现返回全量，无分页语义。
   @BuiltValueField(wireName: r'page')
   int get page;
 
+  /// 当前实现仅回显，不切片。
   @BuiltValueField(wireName: r'pageSize')
   int get pageSize;
 

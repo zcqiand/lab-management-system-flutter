@@ -593,7 +593,7 @@ class InspectionCatalogApi {
   }
 
   /// catalogListBrands
-  ///
+  /// 分页：当前实现仅回显不切片，参照实现返回全量，无分页语义（pageSize 同）。
   ///
   /// Parameters:
   /// * [page]
@@ -694,7 +694,7 @@ class InspectionCatalogApi {
   }
 
   /// catalogListGrades
-  ///
+  /// 分页：当前实现仅回显不切片，参照实现返回全量，无分页语义（pageSize 同）。
   ///
   /// Parameters:
   /// * [page]
@@ -795,7 +795,7 @@ class InspectionCatalogApi {
   }
 
   /// catalogListModels
-  ///
+  /// 分页：当前实现仅回显不切片，参照实现返回全量，无分页语义（pageSize 同）。
   ///
   /// Parameters:
   /// * [page]
@@ -896,7 +896,7 @@ class InspectionCatalogApi {
   }
 
   /// catalogListSpecs
-  ///
+  /// 分页：当前实现仅回显不切片，参照实现返回全量，无分页语义（pageSize 同）。
   ///
   /// Parameters:
   /// * [page]
